@@ -4,4 +4,6 @@ psutil
 requests
 PyNaCl
 discord.py[voice]
-opus-api
+aiohttp
+websockets
+chardet
