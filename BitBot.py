@@ -23,6 +23,257 @@ bot = commands.Bot(command_prefix=prefix)
 global spamy
 spamy = 0
 
+if not discord.opus.is_loaded():
+    discord.opus.load_opus('opus')
+
+class VoiceEntry:
+    def __init__(self, message, player):
+        self.requester = message.author
+        self.channel = message.channel
+        self.player = player
+
+    def __str__(self):
+        fmt = '*{0.title}* przez **{0.uploader}** - do kolejki dodał <@{1.id}>'
+        duration = self.player.duration
+        if duration:
+            fmt = fmt + ' (długość: {0[0]}m {0[1]}s)'.format(divmod(duration, 60))
+        return fmt.format(self.player, self.requester)
+
+class VoiceState:
+    def __init__(self, bot):
+        self.current = None
+        self.voice = None
+        self.bot = bot
+        self.play_next_song = asyncio.Event()
+        self.songs = asyncio.Queue()
+        self.skip_votes = set()
+        self.audio_player = self.bot.loop.create_task(self.audio_player_task())
+
+    def is_playing(self):
+        if self.voice is None or self.current is None:
+            return False
+
+        player = self.current.player
+        return not player.is_done()
+
+    @property
+    def player(self):
+        return self.current.player
+
+    def skip(self):
+        self.skip_votes.clear()
+        if self.is_playing():
+            self.player.stop()
+
+    def toggle_next(self):
+        self.bot.loop.call_soon_threadsafe(self.play_next_song.set)
+
+    async def audio_player_task(self):
+        while True:
+            self.play_next_song.clear()
+            self.current = await self.songs.get()
+            await self.bot.send_message(self.current.channel, 'Teraz grane: ' + str(self.current))
+            self.current.player.start()
+            await self.play_next_song.wait()
+
+class Komendy:
+    def __init__(self, bot):
+        self.bot = bot
+        self.voice_states = {}
+
+    def get_voice_state(self, server):
+        state = self.voice_states.get(server.id)
+        if state is None:
+            state = VoiceState(self.bot)
+            self.voice_states[server.id] = state
+
+        return state
+
+    async def create_voice_client(self, channel):
+        voice = await self.bot.join_voice_channel(channel)
+        state = self.get_voice_state(channel.server)
+        state.voice = voice
+
+    def __unload(self):
+        for state in self.voice_states.values():
+            try:
+                state.audio_player.cancel()
+                if state.voice:
+                    self.bot.loop.create_task(state.voice.disconnect())
+            except:
+                pass
+    '''
+    @commands.command(pass_context=True, no_pm=True)
+    async def Dołącz(self, ctx, *, channel : discord.Channel):
+        try:
+            await self.create_voice_client(channel)
+        except discord.ClientException:
+            await self.bot.say('Jestem już w kanale głosowym!')
+        except discord.InvalidArgument:
+            await self.bot.say('To raczej nie jest kanał głosowy.')
+        else:
+            await self.bot.say('Dołączyłem do ' + channel.name)
+    '''
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Przywołaj(self, ctx):
+        summoned_channel = ctx.message.author.voice_channel
+        if summoned_channel is None:
+            await self.bot.say('Hej, tą komendę się wykonuje jak jesteś w kanale głosowym.')
+            return False
+
+        state = self.get_voice_state(ctx.message.server)
+        if state.voice is None:
+            state.voice = await self.bot.join_voice_channel(summoned_channel)
+        else:
+            await state.voice.move_to(summoned_channel)
+        await self.bot.say('Dołączyłem do ' + summoned_channel.name)
+        return True
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Zagraj(self, ctx, *, song : str):
+        state = self.get_voice_state(ctx.message.server)
+        opts = {
+            'default_search': 'auto',
+            'quiet': True
+        }
+
+        if state.voice is None:
+            success = await ctx.invoke(self.Przywołaj)
+            if not success:
+                return
+
+        try:
+            player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
+        except Exception as e:
+            fmt = ' Ojej! Wystąpił błąd: ```\n{}: {}\n```'
+            await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
+        else:
+            player.volume = 0.6
+            entry = VoiceEntry(ctx.message, player)
+            await self.bot.say('Dodano ' + str(entry))
+            await state.songs.put(entry)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Radio(self, ctx):
+        sp_vip(ctx.message.author.id)
+        if not vipczynie == 1:
+            if BitBotHelper.Konfiguracje.RadioJestZablokowane(ctx.message.server.id) == True:
+                await bot.say("Radio jest zablokowane!")
+                return
+            await bot.say(nievip)
+            return
+        while True:
+            state = self.get_voice_state(ctx.message.server)
+            
+            opts = {
+                'default_search': 'auto',
+                'quiet': True
+            }
+
+            if state.voice is None:
+                success = await ctx.invoke(self.Przywołaj)
+                if not success:
+                    return
+
+            try:
+                songs = ["https://www.youtube.com/watch?v=SHFTHDncw0g", "https://www.youtube.com/watch?v=8U2rKAnyyDE", "https://www.youtube.com/watch?v=6FNHe3kf8_s", "https://www.youtube.com/watch?v=A56p-ZSZ5Vc", "https://www.youtube.com/watch?v=60ItHLz5WEA", "https://www.youtube.com/watch?v=8JnfIa84TnU", "https://www.youtube.com/watch?v=FzG4uDgje3M", "https://www.youtube.com/watch?v=Oa4klaedx0g", "https://www.youtube.com/watch?v=PCQs3vSJ6xA", "https://www.youtube.com/watch?v=2Vv-BfVoq4g"]
+                song = songs[random.randint(0, len(songs) - 1)]
+                player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
+            except Exception as e:
+                fmt = ' Ojej! Wystąpił błąd: ```\n{}: {}\n```'
+                await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
+            else:
+                player.volume = 0.6
+                entry = VoiceEntry(ctx.message, player)
+                await state.songs.put(entry)
+                self.player = player
+                duration = self.player.duration
+                if duration:
+                    czekaj = int(duration)
+                    await asyncio.sleep(czekaj)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Głośność(self, ctx, value : int):
+        state = self.get_voice_state(ctx.message.server)
+        if state.is_playing():
+            player = state.player
+            player.volume = value / 100
+            await self.bot.say('Ustawiono głośność na {:.0%}'.format(player.volume))
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Earrape(self, ctx):
+        state = self.get_voice_state(ctx.message.server)
+        if state.is_playing():
+            player = state.player
+            player.volume = 99999999999999999999999
+            await self.bot.say("Tryb ear rape włączony!")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Pauza(self, ctx):
+        state = self.get_voice_state(ctx.message.server)
+        if state.is_playing():
+            player = state.player
+            player.pause()
+            await bot.add_reaction(ctx.message, '✅')
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Wznów(self, ctx):
+        state = self.get_voice_state(ctx.message.server)
+        if state.is_playing():
+            player = state.player
+            player.resume()
+            await bot.add_reaction(ctx.message, '✅')
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Zatrzymaj(self, ctx):
+        server = ctx.message.server
+        state = self.get_voice_state(server)
+
+        if state.is_playing():
+            player = state.player
+            player.stop()
+
+        try:
+            state.audio_player.cancel()
+            del self.voice_states[server.id]
+            await state.voice.disconnect()
+            await bot.add_reaction(ctx.message, '✅')
+        except:
+            pass
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def Pomiń(self, ctx):
+        state = self.get_voice_state(ctx.message.server)
+        if not state.is_playing():
+            await self.bot.say('Teraz nic nie gra.')
+            return
+
+        voter = ctx.message.author
+        if voter == state.current.requester:
+            await self.bot.say('Pomijam...')
+            state.skip()
+        elif voter.id not in state.skip_votes:
+            state.skip_votes.add(voter.id)
+            total_votes = len(state.skip_votes)
+            if total_votes >= 3:
+                await self.bot.say('Pomijam...')
+                state.skip()
+            else:
+                await self.bot.say('Dodano głos. Teraz jest ich {} na 3.'.format(total_votes))
+        else:
+            await self.bot.say('Nie oszukuj! Już zagłosowałeś na pominięcie!.')
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def CoGra(self, ctx):
+        state = self.get_voice_state(ctx.message.server)
+        if state.current is None:
+            await self.bot.say('Teraz nic nie gra.')
+        else:
+            skip_count = len(state.skip_votes)
+            await self.bot.say('Teraz gra {} z {} na 3 pominięciami.'.format(state.current, skip_count))
+
+
 @bot.event
 async def on_ready():
     global uruchomionyw
