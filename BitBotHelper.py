@@ -1,3 +1,5 @@
+import os
+
 class Konfiguracje:
     
     def ZablokujRadio(serwer):
