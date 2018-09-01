@@ -1,3 +1,10 @@
+# Hej, poczekaj!
+# Mam ci coś do powiedzenia!
+# Po pierwsze, wersja na Heroku jest bardzo okrojona.
+# Po drugie, nie ukradniesz mi tokenu.
+# Po trzecie, pewnie skopiujesz ten kod ;)
+# No dobra, to jest kod.
+
 import time
 poczatek = time.monotonic()
 import os
@@ -11,6 +18,8 @@ import requests
 import datetime
 from math import floor
 from googlesearch import search
+
+zaufani = list(os.environ.get('ZAUFANI'))
 
 global rokrodzin
 rokurodzin = 2019
@@ -73,23 +82,6 @@ async def Losuj(ctx, minimalny : int, maksymalny : int):
     await bot.say("Wylosowana liczba to {}.".format(str(random.randint(minimalny, maksymalny))))
 
 @bot.command(pass_context=True)
-async def Nadaj(ctx, *, wiadomosc : str):
-    try:
-        plik = open("/home/pi/bitbotdata/publicznewiadomosci.txt", "a")
-        plik.write("{}: {}\n".format(ctx.message.author.name, wiadomosc))
-        plik.close()
-        await bot.add_reaction(ctx.message, "✅")
-    except:
-        await bot.add_reaction(ctx.message, "❎")
-
-@bot.command(pass_context=True)
-async def Wiadomości(ctx):
-    plik = open("/home/pi/bitbotdata/publicznewiadomosci.txt", "r")
-    wiadomosci = plik.read()
-    await bot.say(wiadomosci)
-    plik.close()
-
-@bot.command(pass_context=True)
 async def EmojiID(ctx, emoji : discord.Emoji):
     await bot.say("A ID emotki {} to... {}".format(str(emoji), str(emoji.id)))
 
@@ -107,14 +99,13 @@ async def Ping(ctx):
 
 @bot.command(pass_context=True)
 async def LiveUptime(ctx):
-    sp_vip(ctx.message.author.id)
-    if vipczynie == 1:
+    if ctx.message.author.id in zaufani:
         msg = await bot.say(uptimemsg)
         while True:
             await asyncio.sleep(1)
             await bot.edit_message(msg, uptimemsg)
     else:
-        await bot.say(nievip + " Trochę to obciąża komputer.")
+        await bot.say(nievip)
 
 @bot.command(pass_context=True)
 async def kek(ctx):
@@ -136,6 +127,7 @@ async def Serwery(ctx):
     if ctx.message.author.id == "233592407902388224":
         for x in range(len(serwery)):
             await bot.send_message(ctx.message.author, str(serwery[x-1].name))
+            await bot.say("Wysłałem listę serwerów do ciebie.")
 
 @bot.command(pass_context=True)
 async def LiczbaSerwerów(ctx):
@@ -324,8 +316,7 @@ async def Zaproś(ctx, kanal : discord.Channel):
 
 @bot.command(pass_context=True)
 async def Gra(ctx, *, status):
-    sp_vip(ctx.message.author.id)
-    if vipczynie == 1:
+    if ctx.message.author.id in zaufani:
         global rokurodzin
         dzisiaj = datetime.date.today()
         urodziny = datetime.date(rokurodzin, 4, 8)
@@ -340,8 +331,7 @@ async def Gra(ctx, *, status):
 
 @bot.command(pass_context=True)
 async def Streamuje(ctx, *, status):
-    sp_vip(ctx.message.author.id)
-    if vipczynie == 1:
+    if ctx.message.author.id in zaufani:
         global rokurodzin
         dzisiaj = datetime.date.today()
         urodziny = datetime.date(rokurodzin, 4, 8)
@@ -356,8 +346,7 @@ async def Streamuje(ctx, *, status):
 
 @bot.command(pass_context=True)
 async def Słucha(ctx, *, status):
-    sp_vip(ctx.message.author.id)
-    if vipczynie == 1:
+    if ctx.message.author.id in zaufani:
         global rokurodzin
         dzisiaj = datetime.date.today()
         urodziny = datetime.date(rokurodzin, 4, 8)
@@ -372,8 +361,7 @@ async def Słucha(ctx, *, status):
 
 @bot.command(pass_context=True)
 async def Ogląda(ctx, *, status):
-    sp_vip(ctx.message.author.id)
-    if vipczynie == 1:
+    if ctx.message.author.id in zaufani:
         global rokurodzin
         dzisiaj = datetime.date.today()
         urodziny = datetime.date(rokurodzin, 4, 8)
@@ -415,7 +403,7 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Statystyki", value="Statystyki bota.", inline=True)
         embed.add_field(name=prefix + "LiczbaSerwerów", value="Liczba serwerów na których jestem.", inline=True)
         embed.add_field(name=prefix + "Wyślij <użytkownik (użytkownik)> <wiadomość (tekst)>", value="Wyślij użytkownikowi wiadomość. Z podpisem.", inline=True)
-        embed.add_field(name=prefix + "Wiadomości", value="Wiadomości nadane za pomocą komendy {}Nadaj.".format(prefix), inline=True)
+        embed.add_field(name=prefix + "Serwery", value="Lista serwerów, na których jestem. Nie bój się, nikt nie ma do nich dostępu.", inline=True)
         embed.add_field(name=prefix + "Urodziny", value="Licznik dni do moich urodzin!", inline=True)
         embed.add_field(name=prefix + "Szukaj <fraza (tekst)>", value="Wyszukaj coś w Google.", inline=True)
         embed.add_field(name=prefix + "Pytanie <pytanie (tekst)>", value="Zapytaj ludzi pytaniem tak/nie.", inline=True)
@@ -431,12 +419,10 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Powiedz <tekst (tekst)>", value="Powiem coś.", inline=True)
         embed.add_field(name=prefix + "Losuj <liczba1 (liczba)> <liczba2 (liczba)>", value="Wylosuj liczbę.", inline=True)
         embed.add_field(name=prefix + "LiteraPoLiterze <tekst (tekst)>", value="Bardzo fajna komenda!", inline=True)
-        embed.add_field(name=prefix + "Nadaj <tekst (tekst)>", value="Nadaj coś!", inline=True)
         embed.add_field(name=prefix + "Informacje <użytkownik (użytkownik, opcjonalnie)>", value="Informacje o użytkowniku.", inline=True)
         embed.add_field(name=prefix + "DodajVIPa <użytkownik (użytkownik)>", value="Dodaj VIPa.", inline=True)
         embed.add_field(name=prefix + "Wykop <użytkownik (użytkownik)>", value="Wykop użytkownika.", inline=True)
         embed.add_field(name=prefix + "Zbanuj <użytkownik (użytkownik)> <powód (opcjonalnie, tekst)>", value="Zbanuj użytkownika.", inline=True)
-        embed.add_field(name=prefix + "Konfiguruj", value="Więcej informacji w komendzie.", inline=True)
         embed.add_field(name=prefix + "Wyczyść <ilość (liczba)>", value="Czyści czat. Nie usuwa wiadomości sprzed 14 dni.", inline=True)
         embed.add_field(name=prefix + "Członkowie", value="Liczba członków serwera.", inline=True)
         embed.add_field(name=prefix + "Serwer", value="Informacje o serwerze.", inline=True)
@@ -554,4 +540,4 @@ bot.loop.create_task(uptime())
 
 token = os.environ.get('TOKEN')
 
-bot.run(str(token))
+bot.run(token)
