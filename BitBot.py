@@ -259,52 +259,9 @@ async def Powiedz(ctx, *, wiadomosc):
     await bot.say(wiadomosc)
 
 @bot.command(pass_context=True)
-async def Malina(ctx):
-    ktory = random.randint(1, 5)
-    if ktory == 1:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/maliny.jpg')
-    elif ktory == 2:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/malinyzliscmi.jpg')
-    elif ktory == 3:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/dwiemaliny.jpg')
-    elif ktory == 4:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/trzymaliny.jpg')
-    elif ktory == 5:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/kilkamalin.jpg')
-
-@bot.command(pass_context=True)
-async def Wiadomość(ctx):
-    ktory = random.randint(1, 12)
-    if ktory == 1:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/1/wiadomosc')
-    elif ktory == 2:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/2/wiadomosc')
-    elif ktory == 3:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/3/wiadomosc')
-    elif ktory == 4:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/4/wiadomosc')
-    elif ktory == 5:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/5/wiadomosc')
-    elif ktory == 6:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/6/wiadomosc')
-    elif ktory == 7:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/7/wiadomosc')
-    elif ktory == 8:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/8/wiadomosc')
-    elif ktory == 9:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/9/wiadomosc')
-    elif ktory == 10:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/10/wiadomosc')
-    elif ktory == 11:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/11/wiadomosc')
-    elif ktory == 12:
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/wiadomosci/12/wiadomosc')
-
-@bot.command(pass_context=True)
 async def BotLink(ctx):
     await bot.say("http://discord.gg/8hpE4xw")
 
-'''
 @bot.command(pass_context=True)
 async def Zaproś(ctx, kanal : discord.Channel):
     try:
@@ -312,7 +269,6 @@ async def Zaproś(ctx, kanal : discord.Channel):
         await bot.say(zaproszenie)
     except Exception as e:
         await bot.say("Wystąpił błąd: \n```{}: {}```".format(type(e).__name__, e))
-'''
 
 @bot.command(pass_context=True)
 async def Gra(ctx, *, status):
@@ -391,14 +347,12 @@ async def Pomoc(ctx, strona=None):
         embed = discord.Embed(title="Pomoc", description="Strona 1/2", color=0xff0000)
         embed.add_field(name=prefix + "Spam <ilość spamu (liczba)> <spowolnienie (liczba)> <wiadomość (tekst)>", value="Spamuje wiadomościami.", inline=True)
         embed.add_field(name=prefix + "Anonim <użytkownik (użytkownik)> <wiadomość (tekst)>", value="Wyślij do kogoś wiadomość. Bez podpisu.", inline=True)
-        embed.add_field(name=prefix + "SprawdźVIPa <użytkownik (użytkownik)>", value="Sprawdź, czy ktoś ma VIPa", inline=True)
         embed.add_field(name=prefix + "Wybierz <wybory (tekst, wybór nie może mieć spacji)>", value="Losuje jedno słowo z podanych.", inline=True)
         embed.add_field(name=prefix + "EmojiID <emotka (emoji)>", value="Sprawdza ID emotki. Działa tylko z emoji na serwerze.", inline=True)
         embed.add_field(name=prefix + "CustomEmoji <emotka z innego serwera (emoji lub tekst)> <id emotki z innego serwera (liczba)>", value="Wysyła emoji z innego serwera.", inline=True)
         embed.add_field(name=prefix + "Ping", value=":ping_pong: Pong!", inline=True)
         embed.add_field(name=prefix + "Gra/Słucha/Ogląda/Streamuje <gra (tekst)>", value="Ustawia grę.", inline=True)
         embed.add_field(name=prefix + "Napisz <kanał (kanał)> <wiadomość (tekst)>", value="Wysyła wiadomość do określonego kanału.", inline=True)
-        embed.add_field(name=prefix + "Wiadomość", value="Wysyła wiadomość w pliku.", inline=True)
         embed.add_field(name=prefix + "Nazwa <użytkownik (użytkownik)> <nowa nazwa (tekst)>", value="Zmień nazwę użytkownika.", inline=True)
         embed.add_field(name=prefix + "Statystyki", value="Statystyki bota.", inline=True)
         embed.add_field(name=prefix + "LiczbaSerwerów", value="Liczba serwerów na których jestem.", inline=True)
@@ -412,17 +366,15 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Odwróć <tekst (tekst)>", value="Odwróć tekst!", inline=True)
         embed.add_field(name=prefix + "Zaproś <kanał (kanał)>", value="Utwórz zaproszenie do serwera.", inline=True)
         embed.add_field(name=prefix + "Milionerzy", value="Sprawdź to. Nie polecam.", inline=True)
-        embed.add_field(name=prefix + "Malina", value="Lubisz je?", inline=True)
         embed.add_field(name=prefix + "Embed <tekst (tekst)>", value="Zamiast się botować, wykonaj tą komendę.", inline=True)
-    elif strona == 2:
-        embed = discord.Embed(title="Pomoc", description="Strona 2/2", color=0xff0000)
         embed.add_field(name=prefix + "Powiedz <tekst (tekst)>", value="Powiem coś.", inline=True)
         embed.add_field(name=prefix + "Losuj <liczba1 (liczba)> <liczba2 (liczba)>", value="Wylosuj liczbę.", inline=True)
         embed.add_field(name=prefix + "LiteraPoLiterze <tekst (tekst)>", value="Bardzo fajna komenda!", inline=True)
+    elif strona == 2:
+        embed = discord.Embed(title="Pomoc", description="Strona 2/2", color=0xff0000)
         embed.add_field(name=prefix + "Informacje <użytkownik (użytkownik, opcjonalnie)>", value="Informacje o użytkowniku.", inline=True)
-        embed.add_field(name=prefix + "DodajVIPa <użytkownik (użytkownik)>", value="Dodaj VIPa.", inline=True)
         embed.add_field(name=prefix + "Wykop <użytkownik (użytkownik)>", value="Wykop użytkownika.", inline=True)
-        embed.add_field(name=prefix + "Zbanuj <użytkownik (użytkownik)> <powód (opcjonalnie, tekst)>", value="Zbanuj użytkownika.", inline=True)
+        embed.add_field(name=prefix + "Zbanuj <użytkownik (użytkownik)>", value="Zbanuj użytkownika.", inline=True)
         embed.add_field(name=prefix + "Wyczyść <ilość (liczba)>", value="Czyści czat. Nie usuwa wiadomości sprzed 14 dni.", inline=True)
         embed.add_field(name=prefix + "Członkowie", value="Liczba członków serwera.", inline=True)
         embed.add_field(name=prefix + "Serwer", value="Informacje o serwerze.", inline=True)
@@ -430,6 +382,11 @@ async def Pomoc(ctx, strona=None):
         embed = discord.Embed(title="Pomoc", description="Strona {}/2".format(str(strona)), color=0xff0000)
         embed.set_footer(text="Nie znaleziono strony!")
     await bot.say(embed=embed)
+
+@bot.command(pass_context=True)
+async def Zasady(ctx):
+    if ctx.message.server.id == "407103788772622336":
+        await bot.say("1. Szanuj i nie obrażaj innych graczy\n2. Nie proś o rangi\n3. Nie przeklinaj (wolno po 20:00 do 06:00 czasu polskiego)\n4. Nie spamuj i nie flooduj.\n5. ABSOLUTNY ZAKAZ REKLAMOWANIA SERVERÓW I KANAŁÓW\n6. Nie nadużywaj wzmianek @here i @everyone\n\n--------Kary\n1.Upomnienie\n2.Upomnienie\n3.Upomnienie\n4.Mute na 1h\n5.Mute na 6h\n6.Mute na 12h\n7.mute na 24h\n8.Ban na 24h\n9.Ban na 7dni\n10.Ban na 30dni\n11.Ban permanentny")
 
 @bot.command(pass_context=True)
 async def Informacje(ctx, *, user:discord.User=None):
