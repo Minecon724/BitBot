@@ -168,7 +168,6 @@ async def Statystyki(ctx):
     embed.add_field(name="Czas uruchomienia", value="{}".format(uruchomionyw), inline=True)
     embed.add_field(name="psutil.cpu_percent()", value="{}".format(str(psutil.cpu_percent())), inline=True)
     embed.add_field(name="psutil.net_io_counters()", value="{}".format(str(psutil.net_io_counters())), inline=True)
-    embed.add_field(name="System:", value="{}".format(str(os.system())), inline=True)
     await bot.say(embed=embed)
 
 '''
