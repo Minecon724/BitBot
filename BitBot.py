@@ -4,7 +4,7 @@ import os
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-from opus.api import libopus
+import libopus
 import asyncio
 import random
 import psutil
