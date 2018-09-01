@@ -11,7 +11,6 @@ import requests
 import datetime
 from math import floor
 from googlesearch import search
-import BitBotHelper
 
 global rokrodzin
 rokurodzin = 2019
@@ -20,22 +19,9 @@ prefix = "$$"
 
 bot = commands.Bot(command_prefix=prefix)
 
-def sp_vip(uzytkownik):
-    global vipczynie
-    try:
-        plik = open("/home/pi/bitbotdata/uzytkownicy/" + uzytkownik, "r")
-        czyvip = plik.read()
-        plik.close()
-        if czyvip == "tak":
-            vipczynie = 1
-        else:
-            vipczynie = 0
-    except:
-        vipczynie = 0
-
 global spamy
 spamy = 0
-'''
+
 # Music Bot
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
@@ -116,7 +102,7 @@ class Komendy:
                     self.bot.loop.create_task(state.voice.disconnect())
             except:
                 pass
-
+    '''
     @commands.command(pass_context=True, no_pm=True)
     async def Dołącz(self, ctx, *, channel : discord.Channel):
         try:
@@ -127,6 +113,7 @@ class Komendy:
             await self.bot.say('To raczej nie jest kanał głosowy.')
         else:
             await self.bot.say('Dołączyłem do ' + channel.name)
+    '''
 
     @commands.command(pass_context=True, no_pm=True)
     async def Przywołaj(self, ctx):
@@ -466,17 +453,21 @@ async def kek(ctx):
 
 @bot.command(pass_context=True)
 async def Spam(ctx, ilosc : int, cooldown : int, *, wiadomosc : str):
-    sp_vip(ctx.message.author.id)
-    if vipczynie == 1:
+    licznik = 0
+    global spamy
+    while licznik < ilosc:
+        await bot.say(wiadomosc)
+        licznik = licznik + 1
+        spamy = spamy + 1
+        await asyncio.sleep(cooldown)
+
+@bot.command(pass_context=True)
+async def Serwery(ctx):
+    if ctx.message.author.id == "233592407902388224":
         licznik = 0
-        global spamy
-        while licznik < ilosc:
-            await bot.say(wiadomosc)
+        while licznik < len(bot.servers):
+            await bot.send_message(ctx.message.author, bot.servers[licznik])
             licznik = licznik + 1
-            spamy = spamy + 1
-            await asyncio.sleep(cooldown)
-    else:
-        await bot.say(nievip + " Nawet nie myśl o wykonaniu tej komendy bez VIPa.")
 
 @bot.command(pass_context=True)
 async def LiczbaSerwerów(ctx):
