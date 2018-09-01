@@ -272,7 +272,6 @@ class Komendy:
         else:
             skip_count = len(state.skip_votes)
             await self.bot.say('Teraz gra {} z {} na 3 pominięciami.'.format(state.current, skip_count))
-'''
 
 @bot.event
 async def on_ready():
