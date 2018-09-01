@@ -35,7 +35,7 @@ def sp_vip(uzytkownik):
 
 global spamy
 spamy = 0
-
+'''
 # Music Bot
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
@@ -285,7 +285,7 @@ class Komendy:
         else:
             skip_count = len(state.skip_votes)
             await self.bot.say('Teraz gra {} z {} na 3 pominięciami.'.format(state.current, skip_count))
-
+'''
 
 @bot.event
 async def on_ready():
@@ -509,6 +509,7 @@ async def Statystyki(ctx):
     embed.add_field(name="psutil.net_io_counters()", value="{}".format(str(psutil.net_io_counters())), inline=True)
     await bot.say(embed=embed)
 
+'''
 @bot.command(pass_context=True)
 async def Napisz(ctx, kanal : discord.Channel, *, wiadomosc):
     try:
@@ -516,6 +517,7 @@ async def Napisz(ctx, kanal : discord.Channel, *, wiadomosc):
         await bot.say("Napisałem **{}** w **<#{}>**.".format(wiadomosc, kanal.id))
     except Exception as e:
         await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+'''
 
 @bot.command(pass_context=True)
 async def Pytanie(ctx, *, zapytaj):
@@ -653,6 +655,7 @@ async def Wiadomość(ctx):
 async def BotLink(ctx):
     await bot.say("http://discord.gg/8hpE4xw")
 
+'''
 @bot.command(pass_context=True)
 async def Zaproś(ctx, kanal : discord.Channel):
     try:
@@ -660,6 +663,7 @@ async def Zaproś(ctx, kanal : discord.Channel):
         await bot.say(zaproszenie)
     except Exception as e:
         await bot.say("Wystąpił błąd: \n```{}: {}```".format(type(e).__name__, e))
+'''
 
 @bot.command(pass_context=True)
 async def Gra(ctx, *, status):
@@ -889,7 +893,7 @@ async def uptime():
         else:
             uptimemsg = str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
-bot.add_cog(Komendy(bot))
+#bot.add_cog(Komendy(bot))
 
 bot.loop.create_task(uptime())
 
