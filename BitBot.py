@@ -19,7 +19,7 @@ import datetime
 from math import floor
 from googlesearch import search
 
-zaufani = list(os.environ.get('ZAUFANI'))
+zaufani = ["233592407902388224", "313674007037739010", "427146936957534218"]
 
 global rokrodzin
 rokurodzin = 2019
