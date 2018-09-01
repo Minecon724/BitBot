@@ -1,6 +1,6 @@
 import time
 poczatek = time.monotonic()
-
+import os
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -893,6 +893,6 @@ bot.add_cog(Komendy(bot))
 
 bot.loop.create_task(uptime())
 
-token = BitBotHelper.Token()
+token = os.environ.get('TOKEN')
 
-bot.run(token)
+bot.run(str(token))
