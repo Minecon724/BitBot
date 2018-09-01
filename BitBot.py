@@ -551,8 +551,6 @@ async def uptime():
         else:
             uptimemsg = str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
-bot.add_cog(Komendy(bot))
-
 bot.loop.create_task(uptime())
 
 token = os.environ.get('TOKEN')
