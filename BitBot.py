@@ -893,4 +893,4 @@ bot.add_cog(Komendy(bot))
 
 bot.loop.create_task(uptime())
 
-bot.run(str(os.environ.get('token')))
+bot.run(os.environ.get('TOKEN')) 
