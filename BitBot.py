@@ -4,6 +4,7 @@ import os
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord import opus
 import asyncio
 import random
 import psutil
@@ -22,257 +23,6 @@ bot = commands.Bot(command_prefix=prefix)
 global spamy
 spamy = 0
 
-# Music Bot
-if not discord.opus.is_loaded():
-    discord.opus.load_opus('opus')
-
-class VoiceEntry:
-    def __init__(self, message, player):
-        self.requester = message.author
-        self.channel = message.channel
-        self.player = player
-
-    def __str__(self):
-        fmt = '*{0.title}* przez **{0.uploader}** - do kolejki dodał <@{1.id}>'
-        duration = self.player.duration
-        if duration:
-            fmt = fmt + ' (długość: {0[0]}m {0[1]}s)'.format(divmod(duration, 60))
-        return fmt.format(self.player, self.requester)
-
-class VoiceState:
-    def __init__(self, bot):
-        self.current = None
-        self.voice = None
-        self.bot = bot
-        self.play_next_song = asyncio.Event()
-        self.songs = asyncio.Queue()
-        self.skip_votes = set()
-        self.audio_player = self.bot.loop.create_task(self.audio_player_task())
-
-    def is_playing(self):
-        if self.voice is None or self.current is None:
-            return False
-
-        player = self.current.player
-        return not player.is_done()
-
-    @property
-    def player(self):
-        return self.current.player
-
-    def skip(self):
-        self.skip_votes.clear()
-        if self.is_playing():
-            self.player.stop()
-
-    def toggle_next(self):
-        self.bot.loop.call_soon_threadsafe(self.play_next_song.set)
-
-    async def audio_player_task(self):
-        while True:
-            self.play_next_song.clear()
-            self.current = await self.songs.get()
-            await self.bot.send_message(self.current.channel, 'Teraz grane: ' + str(self.current))
-            self.current.player.start()
-            await self.play_next_song.wait()
-
-class Komendy:
-    def __init__(self, bot):
-        self.bot = bot
-        self.voice_states = {}
-
-    def get_voice_state(self, server):
-        state = self.voice_states.get(server.id)
-        if state is None:
-            state = VoiceState(self.bot)
-            self.voice_states[server.id] = state
-
-        return state
-
-    async def create_voice_client(self, channel):
-        voice = await self.bot.join_voice_channel(channel)
-        state = self.get_voice_state(channel.server)
-        state.voice = voice
-
-    def __unload(self):
-        for state in self.voice_states.values():
-            try:
-                state.audio_player.cancel()
-                if state.voice:
-                    self.bot.loop.create_task(state.voice.disconnect())
-            except:
-                pass
-    '''
-    @commands.command(pass_context=True, no_pm=True)
-    async def Dołącz(self, ctx, *, channel : discord.Channel):
-        try:
-            await self.create_voice_client(channel)
-        except discord.ClientException:
-            await self.bot.say('Jestem już w kanale głosowym!')
-        except discord.InvalidArgument:
-            await self.bot.say('To raczej nie jest kanał głosowy.')
-        else:
-            await self.bot.say('Dołączyłem do ' + channel.name)
-    '''
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Przywołaj(self, ctx):
-        summoned_channel = ctx.message.author.voice_channel
-        if summoned_channel is None:
-            await self.bot.say('Hej, tą komendę się wykonuje jak jesteś w kanale głosowym.')
-            return False
-
-        state = self.get_voice_state(ctx.message.server)
-        if state.voice is None:
-            state.voice = await self.bot.join_voice_channel(summoned_channel)
-        else:
-            await state.voice.move_to(summoned_channel)
-        await self.bot.say('Dołączyłem do ' + summoned_channel.name)
-        return True
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Zagraj(self, ctx, *, song : str):
-        state = self.get_voice_state(ctx.message.server)
-        opts = {
-            'default_search': 'auto',
-            'quiet': True
-        }
-
-        if state.voice is None:
-            success = await ctx.invoke(self.Przywołaj)
-            if not success:
-                return
-
-        try:
-            player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
-        except Exception as e:
-            fmt = ' Ojej! Wystąpił błąd: ```\n{}: {}\n```'
-            await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
-        else:
-            player.volume = 0.6
-            entry = VoiceEntry(ctx.message, player)
-            await self.bot.say('Dodano ' + str(entry))
-            await state.songs.put(entry)
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Radio(self, ctx):
-        sp_vip(ctx.message.author.id)
-        if not vipczynie == 1:
-            if BitBotHelper.Konfiguracje.RadioJestZablokowane(ctx.message.server.id) == True:
-                await bot.say("Radio jest zablokowane!")
-                return
-            await bot.say(nievip)
-            return
-        while True:
-            state = self.get_voice_state(ctx.message.server)
-            
-            opts = {
-                'default_search': 'auto',
-                'quiet': True
-            }
-
-            if state.voice is None:
-                success = await ctx.invoke(self.Przywołaj)
-                if not success:
-                    return
-
-            try:
-                songs = ["https://www.youtube.com/watch?v=SHFTHDncw0g", "https://www.youtube.com/watch?v=8U2rKAnyyDE", "https://www.youtube.com/watch?v=6FNHe3kf8_s", "https://www.youtube.com/watch?v=A56p-ZSZ5Vc", "https://www.youtube.com/watch?v=60ItHLz5WEA", "https://www.youtube.com/watch?v=8JnfIa84TnU", "https://www.youtube.com/watch?v=FzG4uDgje3M", "https://www.youtube.com/watch?v=Oa4klaedx0g", "https://www.youtube.com/watch?v=PCQs3vSJ6xA", "https://www.youtube.com/watch?v=2Vv-BfVoq4g"]
-                song = songs[random.randint(0, len(songs) - 1)]
-                player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
-            except Exception as e:
-                fmt = ' Ojej! Wystąpił błąd: ```\n{}: {}\n```'
-                await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
-            else:
-                player.volume = 0.6
-                entry = VoiceEntry(ctx.message, player)
-                await state.songs.put(entry)
-                self.player = player
-                duration = self.player.duration
-                if duration:
-                    czekaj = int(duration)
-                    await asyncio.sleep(czekaj)
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Głośność(self, ctx, value : int):
-        state = self.get_voice_state(ctx.message.server)
-        if state.is_playing():
-            player = state.player
-            player.volume = value / 100
-            await self.bot.say('Ustawiono głośność na {:.0%}'.format(player.volume))
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Earrape(self, ctx):
-        state = self.get_voice_state(ctx.message.server)
-        if state.is_playing():
-            player = state.player
-            player.volume = 99999999999999999999999
-            await self.bot.say("Tryb ear rape włączony!")
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Pauza(self, ctx):
-        state = self.get_voice_state(ctx.message.server)
-        if state.is_playing():
-            player = state.player
-            player.pause()
-            await bot.add_reaction(ctx.message, '✅')
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Wznów(self, ctx):
-        state = self.get_voice_state(ctx.message.server)
-        if state.is_playing():
-            player = state.player
-            player.resume()
-            await bot.add_reaction(ctx.message, '✅')
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Zatrzymaj(self, ctx):
-        server = ctx.message.server
-        state = self.get_voice_state(server)
-
-        if state.is_playing():
-            player = state.player
-            player.stop()
-
-        try:
-            state.audio_player.cancel()
-            del self.voice_states[server.id]
-            await state.voice.disconnect()
-            await bot.add_reaction(ctx.message, '✅')
-        except:
-            pass
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def Pomiń(self, ctx):
-        state = self.get_voice_state(ctx.message.server)
-        if not state.is_playing():
-            await self.bot.say('Teraz nic nie gra.')
-            return
-
-        voter = ctx.message.author
-        if voter == state.current.requester:
-            await self.bot.say('Pomijam...')
-            state.skip()
-        elif voter.id not in state.skip_votes:
-            state.skip_votes.add(voter.id)
-            total_votes = len(state.skip_votes)
-            if total_votes >= 3:
-                await self.bot.say('Pomijam...')
-                state.skip()
-            else:
-                await self.bot.say('Dodano głos. Teraz jest ich {} na 3.'.format(total_votes))
-        else:
-            await self.bot.say('Nie oszukuj! Już zagłosowałeś na pominięcie!.')
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def CoGra(self, ctx):
-        state = self.get_voice_state(ctx.message.server)
-        if state.current is None:
-            await self.bot.say('Teraz nic nie gra.')
-        else:
-            skip_count = len(state.skip_votes)
-            await self.bot.say('Teraz gra {} z {} na 3 pominięciami.'.format(state.current, skip_count))
-
 @bot.event
 async def on_ready():
     global uruchomionyw
@@ -287,64 +37,6 @@ async def on_ready():
         await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=2))
     elif gos == 4:
         await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=3))
-
-@bot.event
-async def on_member_join(member):
-    if not BitBotHelper.Konfiguracje.JoinDM(member.server.id) == "null":
-        await bot.send_message(member, BitBotHelper.Konfiguracje.JoinDM(member.server.id))
-
-@bot.event
-async def on_member_remove(member):
-    if not BitBotHelper.Konfiguracje.RemoveDM(member.server.id) == "null":
-        await bot.send_message(member, BitBotHelper.Konfiguracje.RemoveDM(member.server.id))
-
-@bot.command(pass_context=True)
-async def Konfiguruj(ctx, co=None, *, wartosc=None):
-    if not ctx.message.author.server_permissions.manage_server:
-        await bot.say("Nie masz permisji do tego!")
-        return
-    if co == None:
-        embed = discord.Embed(title="Konfiguruj bota:")
-        embed.add_field(name="joindm", value="Prywatna wiadomość do nowego członka serwera.", inline=True)
-        embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
-        embed.add_field(name="radio", value="Odblokuj lub zablokuj radio.", inline=True)
-        await bot.say(embed=embed)
-    elif co == "joindm" or co == "removedm":
-        if wartosc == None:
-            embed = discord.Embed(title="Konfiguruj bota:")
-            if co == "joindm":
-                embed.add_field(name="Wartość to:", value="{}".format(BitBotHelper.Konfiguracje.JoinDM(ctx.message.server.id)), inline=True)
-            else:
-                embed.add_field(name="Wartość to:", value="{}".format(BitBotHelper.Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True) 
-            embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj {}Konfiguruj {} <wartość>.".format(prefix, co))
-            await bot.say(embed=embed)
-            return
-        l = str(wartosc).lower()
-        if l == "null":
-            wartosc = "null"
-        if co == "joindm":
-            BitBotHelper.Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
-        else:
-            BitBotHelper.Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
-        await bot.add_reaction(ctx.message, "✅")
-    elif co == "radio":
-        if wartosc == None:
-            embed = discord.Embed(title="Konfiguruj bota:")
-            embed.add_field(name="Wartość to:", value="{}".format(str(BitBotHelper.Konfiguracje.RadioCzyZablokowane(ctx.message.server.id))), inline=True)
-            embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj {}Konfiguruj radio <wartość>.".format(prefix))
-            await bot.say(embed=embed)
-            return
-        l = wartosc.lower()
-        if l == "tak":
-            BitBotHelper.Konfiguracje.OdblokujRadio(ctx.message.server.id)
-        elif l == "nie":
-            BitBotHelper.Konfiguracje.ZablokujRadio(ctx.message.server.id)
-        else:
-            embed = discord.Embed(title="Konfiguruj bota:")
-            embed.add_field(name="Hej,", value="musisz podać wartość **Tak** (*odblokuj*, False) lub **Nie** (*zablokuj*, True)!")
-            await bot.say(embed=embed)
-            return
-        await bot.add_reaction(ctx.message, "✅")
 
 @bot.command(pass_context=True)
 async def LiteraPoLiterze(ctx, *, tekst):
@@ -426,27 +118,6 @@ async def LiveUptime(ctx):
         await bot.say(nievip + " Trochę to obciąża komputer.")
 
 @bot.command(pass_context=True)
-async def SprawdźVIPa(ctx, user : discord.Member):
-    sp_vip(user.id)
-    if vipczynie == 1:
-        await bot.say("Ten użytkownik ma VIPa.")
-    else:
-        await bot.say("Ten użytkownik nie ma VIPa.")
-
-@bot.command(pass_context=True)
-async def DodajVIPa(ctx, user : discord.Member):
-    if not ctx.message.author.id == 233592407902388224:
-        await bot.add_reaction(ctx.message, "❎")
-        return
-    sp_vip(user.id)
-    if vipczynie == 1:
-        await bot.add_reaction(ctx.message, "❎")
-    else:
-        plik = open("/home/pi/bitbotdata/uzytkownicy/" + str(user.id), "w")
-        plik.write("tak")
-        await bot.add_reaction(ctx.message, "✅")
-
-@bot.command(pass_context=True)
 async def kek(ctx):
     await bot.say("Hey I'm MEE6, the Discord bot!")
 
@@ -497,6 +168,7 @@ async def Statystyki(ctx):
     embed.add_field(name="Czas uruchomienia", value="{}".format(uruchomionyw), inline=True)
     embed.add_field(name="psutil.cpu_percent()", value="{}".format(str(psutil.cpu_percent())), inline=True)
     embed.add_field(name="psutil.net_io_counters()", value="{}".format(str(psutil.net_io_counters())), inline=True)
+    embed.add_field(name="System:", value="{}".format(str(os.system())), inline=True)
     await bot.say(embed=embed)
 
 '''
