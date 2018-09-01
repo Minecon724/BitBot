@@ -132,11 +132,10 @@ async def Spam(ctx, ilosc : int, cooldown : int, *, wiadomosc : str):
 
 @bot.command(pass_context=True)
 async def Serwery(ctx):
+    serwery = list(bot.servers)
     if ctx.message.author.id == "233592407902388224":
-        licznik = 0
-        while licznik < len(bot.servers):
-            await bot.send_message(ctx.message.author, bot.servers[licznik])
-            licznik = licznik + 1
+        for x in range(len(serwery)):
+            await bot.send_message(ctx.message.author, str(serwery[x-1].name))
 
 @bot.command(pass_context=True)
 async def LiczbaSerwerów(ctx):
