@@ -2,8 +2,6 @@ git+https://github.com/Rapptz/discord.py
 google
 psutil
 requests
-PyNaCl
-discord.py[voice]
 aiohttp
 websockets
 chardet
