@@ -46,3 +46,6 @@ class Konfiguracje:
         plik = open("/home/pi/bitbotdata/konfiguracje/joindm/" + serwer, "w")
         plik.write(wartosc)
         plik.close()
+
+def Token():
+    return os.evniron.get('TOKEN')
