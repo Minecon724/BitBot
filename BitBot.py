@@ -1,6 +1,6 @@
 import time
 poczatek = time.monotonic()
-import os
+import sys
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -893,6 +893,6 @@ bot.add_cog(Komendy(bot))
 
 bot.loop.create_task(uptime())
 
-token = os.environ.get('TOKEN')
+token = sys.argv[1]
 
 bot.run(token)
