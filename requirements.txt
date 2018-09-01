@@ -4,4 +4,3 @@ psutil
 requests
 PyNaCl
 discord.py[voice]
-youtube-dl
