@@ -242,7 +242,7 @@ async def ZgadnijLiczbę(ctx):
     while not zgadnieta:
         strzal = await bot.wait_for_message(timeout=15.0, author=ctx.message.author, check=guess_check)
         proby = proby + 1
-        if strzal == liczba:
+        if int(strzal.content) == liczba:
             if proby == 1:
                 await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to 1 próbę.")
             elif proby < 5:
@@ -250,9 +250,9 @@ async def ZgadnijLiczbę(ctx):
             else:
                 await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} prób.".format(str(proby)))
             zgadnieta = True
-        elif strzal < liczba:
+        elif int(strzal.content) < liczba:
             await bot.say("Wylosowana liczba jest większa.")
-        elif strzal > liczba:
+        elif int(strzal.content) > liczba:
             await bot.say("Wylosowana liczba jest mniejsza.")
        
 @bot.command(pass_context=True)
