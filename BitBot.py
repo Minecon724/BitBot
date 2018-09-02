@@ -180,7 +180,7 @@ async def Pytanie(ctx, *, zapytaj):
 
 @bot.command(pass_context=True)
 async def Milionerzy(ctx):
-    pytanie = random.randint(1, 11)
+    pytanie = random.randint(1, 12)
     if pytanie == 1:
         answer = 2
         question = "Co jest hitem tego lata: 1) gówno 2) memy 3) szajsung galaxy s9 4) srajfon x"
@@ -197,8 +197,8 @@ async def Milionerzy(ctx):
         answer = 2
         question = "Czy jestem debilem: 1) Nie 2) Tak"
     elif pytanie == 6:
-        answer = 3
-        question = "Jestem 1) raperem czy 2) youtuberem? A może 3) nikim?"
+        answer = 1 or 2
+        question = "Co lepsze: 1) Kokaina 2) Marihuana"
     elif pytanie == 7:
         answer = 2
         question = "Co się robi: 1) zupe 2) loda 3) mleko 4) wode 5) telefony 6) płyty czy 7) gówno?"
@@ -209,12 +209,14 @@ async def Milionerzy(ctx):
         answer = 2
         question = "Kochasz mnie? 1) Nie 2) Tak"
     elif pytanie == 10:
-        answer = 7
+        answer = 2
         question = "Które słowo nie jest przekleństwem? 1) Kuźwa 2) Kurwa 3) NenuuX 4) Debil 5) BitBot 6) Hujawej 7) Szajsung najlepszy 8) <@465137398863364097> 9) Kredki 10) Farbki"
     elif pytanie == 11:
         answer = 9
         question = "Jaki jest najlepszy komunikator? 1) Skuj dupe 2) Imprezord 3) Gówno Gówno 4) ŁacAp 5) Masażer 6) Srapczat 7) Tłiter 8) Fejsbug 9) Wiadomości 10) Pokémon Duel"
-         
+    elif pytanie == 12:
+        answer = 1
+        question = "Kim jesteś? 1) CHUJEM czy 2) DEBILEM?"
     await bot.send_message(ctx.message.channel, "{}".format(question))
 
     def guess_check(m):
@@ -230,6 +232,29 @@ async def Milionerzy(ctx):
     else:
         await bot.send_message(ctx.message.channel, 'Niepoprawna odpowiedź.')
 
+@bot.command(pass_context=True)
+async def ZgadnijLiczbę(ctx):
+    def guess_check:
+        return m.content.isdigit()
+    liczba = random.randint(0, 1000)
+    zgadnieta = False
+    proby = 0
+    while not zgadnieta:
+        strzal = await bot.wait_for_message(timeout=15.0, author=ctx.message.author, check=guess_check)
+        proby = proby + 1
+        if strzal == liczba:
+            if proby == 1:
+                await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to 1 próbę.")
+            elif proby < 5:
+                await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} próby.".format(str(proby)))
+            else:
+                await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} prób.".format(str(proby)))
+            zgadnieta = True
+        elif strzal < liczba:
+            await bot.say("Wylosowana liczba jest większa.")
+        elif strzal > liczba:
+            await bot.say("Wylosowana liczba jest mniejsza.")
+       
 @bot.command(pass_context=True)
 async def Pokémon(ctx, pokemon):
     try:
@@ -379,6 +404,7 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Wyczyść <ilość (liczba)>", value="Czyści czat. Nie usuwa wiadomości sprzed 14 dni.", inline=True)
         embed.add_field(name=prefix + "Członkowie", value="Liczba członków serwera.", inline=True)
         embed.add_field(name=prefix + "Serwer", value="Informacje o serwerze.", inline=True)
+        embed.add_field(name=prefix + "ZgadnijLiczbę", value="Zgadnij liczbę!", inline=True)
     elif not strona == None or not strona == 1 or not strona == 2:
         embed = discord.Embed(title="Pomoc", description="Strona {}/2".format(str(strona)), color=0xff0000)
         embed.set_footer(text="Nie znaleziono strony!")
