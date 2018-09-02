@@ -234,7 +234,7 @@ async def Milionerzy(ctx):
 
 @bot.command(pass_context=True)
 async def ZgadnijLiczbę(ctx):
-    def guess_check:
+    def guess_check(m):
         return m.content.isdigit()
     liczba = random.randint(0, 1000)
     zgadnieta = False
