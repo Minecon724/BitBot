@@ -233,12 +233,16 @@ async def Milionerzy(ctx):
         await bot.send_message(ctx.message.channel, 'Niepoprawna odpowiedź.')
 
 @bot.command(pass_context=True)
-async def ZgadnijLiczbę(ctx):
+async def ZgadnijLiczbę(ctx, max:int=None):
     def guess_check(m):
         return m.content.isdigit()
-    liczba = random.randint(0, 1000)
+    if max is None:
+        liczba = random.randint(0, 1000)
+    else:
+        liczba = random.randint(0, max)
     zgadnieta = False
     proby = 0
+    await bot.say("Zacznij zgadywać.")
     while not zgadnieta:
         strzal = await bot.wait_for_message(timeout=15.0, author=ctx.message.author, check=guess_check)
         proby = proby + 1
@@ -404,7 +408,7 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Wyczyść <ilość (liczba)>", value="Czyści czat. Nie usuwa wiadomości sprzed 14 dni.", inline=True)
         embed.add_field(name=prefix + "Członkowie", value="Liczba członków serwera.", inline=True)
         embed.add_field(name=prefix + "Serwer", value="Informacje o serwerze.", inline=True)
-        embed.add_field(name=prefix + "ZgadnijLiczbę", value="Zgadnij liczbę!", inline=True)
+        embed.add_field(name=prefix + "ZgadnijLiczbę <maksymalna (liczba, opcjonalnie)>", value="Zgadnij liczbę!", inline=True)
     elif not strona == None or not strona == 1 or not strona == 2:
         embed = discord.Embed(title="Pomoc", description="Strona {}/2".format(str(strona)), color=0xff0000)
         embed.set_footer(text="Nie znaleziono strony!")
