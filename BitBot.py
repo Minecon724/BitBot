@@ -431,7 +431,7 @@ async def Informacje(ctx, *, user:discord.User=None):
     embed.add_field(name="Użytkownik stworzył konto w:", value="{}".format(user.created_at), inline=True)
     embed.add_field(name="Najwyższa rola użytkownika na tym serwerze:", value="{}".format(user.top_role), inline=True)
     embed.set_thumbnail(url=user.avatar_url)
-    embed.set_footer(text=user.name)
+    embed.set_footer(text=user)
     await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
