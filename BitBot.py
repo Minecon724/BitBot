@@ -157,8 +157,8 @@ async def Statystyki(ctx):
     embed.add_field(name="Spamy czasu bota", value="{}".format(str(spamy)), inline=True)
     embed.add_field(name="Czas uruchomienia", value="{}".format(uruchomionyw), inline=True)
     embed.add_field(name="Strefa czasowa", value="{}".format(str(datetime.datetime.now(datetime.timezone.utc).astimezone().tzname())), inline=True)
-    embed.add_field(name="psutil.cpu_percent()", value="{}".format(str(psutil.cpu_percent())), inline=True)
-    embed.add_field(name="psutil.net_io_counters()", value="{}".format(str(psutil.net_io_counters())), inline=True)
+    embed.add_field(name="Obciążenie procesora", value="{}".format(str(psutil.cpu_percent())), inline=True)
+    embed.add_field(name="Twórca", value="Minecon724#2556", inline=True)
     await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
