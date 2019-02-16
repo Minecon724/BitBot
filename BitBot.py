@@ -146,7 +146,7 @@ async def Członkowie(ctx):
     jeden_procent = 100 / (ludzie + boty)
     procent_ludzi = ludzie * jeden_procent
     procent_botów = boty * jeden_procent
-    await bot.say("Ludzi jest {} ({}%), a botów jest {} ({}%).".format(ludzie, procent_ludzi, boty, procent_botów))
+    await bot.say("Ludzi jest {} ({}%), a botów jest {} ({}%).".format(ludzie, floor(procent_ludzi), boty, floor(procent_botów)))
 
 @bot.command(pass_context=True)
 async def Statystyki(ctx):
@@ -207,13 +207,13 @@ async def Milionerzy(ctx):
         question = "Co się robi: 1) zupe 2) loda 3) mleko 4) wode 5) telefony 6) płyty czy 7) gówno?"
     elif pytanie == 8:
         answer = 4
-        question = "Najlepszy tekst wszech czasów: 1) Chyba ty 2) Spierdalaj 3) Śmieć 4) BitBot 5) Gówniarz 6) Chuj 7) NenuuX 8) Milionerzy 9) Dolary 10) Chorwacja 11) Kredki"
+        question = "Najlepszy tekst wszech czasów: 1) Chyba ty 2) Spierdalaj 3) Śmieć 4) BitBot 5) Gówniarz 6) Chuj 7) a 8) Milionerzy 9) Dolary 10) Chorwacja 11) Kredki"
     elif pytanie == 9:
         answer = 2
         question = "Kochasz mnie? 1) Nie 2) Tak"
     elif pytanie == 10:
         answer = 2
-        question = "Które słowo nie jest przekleństwem? 1) Kuźwa 2) Kurwa 3) NenuuX 4) Debil 5) BitBot 6) Hujawej 7) Szajsung najlepszy 8) <@465137398863364097> 9) Kredki 10) Farbki"
+        question = "Które słowo nie jest przekleństwem? 1) Kuźwa 2) Kurwa 3) a 4) Debil 5) BitBot 6) Hujawej 7) Szajsung najlepszy 8) Masza 9) Kredki 10) Farbki"
     elif pytanie == 11:
         answer = 9
         question = "Jaki jest najlepszy komunikator? 1) Skuj dupe 2) Imprezord 3) Gówno Gówno 4) ŁacAp 5) Masażer 6) Srapczat 7) Tłiter 8) Fejsbug 9) Wiadomości 10) Pokémon Duel"
