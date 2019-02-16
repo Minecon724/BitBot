@@ -19,7 +19,8 @@ import datetime
 from math import floor
 from googlesearch import search
 
-zaufani = ["233592407902388224", "313674007037739010", "427146936957534218"]
+zaufani = ["233592407902388224"]
+nievip = "Hmm... Wygląda na to, że nie jesteś programistą BitBota."
 
 global rokrodzin
 rokurodzin = 2019
@@ -145,7 +146,7 @@ async def Członkowie(ctx):
     jeden_procent = 100 / (ludzie + boty)
     procent_ludzi = ludzie * jeden_procent
     procent_botów = boty * jeden_procent
-    await bot.say("Ludzi jest {ludzie} ({procent_ludzi}%), a botów jest {boty} ({procent_botów}%).")
+    await bot.say("Ludzi jest {} ({}%), a botów jest {} ({}%).".format(ludzie, procent_ludzi, boty, procent_botów))
 
 @bot.command(pass_context=True)
 async def Statystyki(ctx):
@@ -260,14 +261,6 @@ async def ZgadnijLiczbę(ctx, max:int=None):
             await bot.say("Wylosowana liczba jest większa.")
         elif int(strzal.content) > liczba:
             await bot.say("Wylosowana liczba jest mniejsza.")
-       
-@bot.command(pass_context=True)
-async def Pokémon(ctx, pokemon):
-    try:
-        pokemon = pokemon.lower()
-        await bot.send_file(ctx.message.channel, '/home/pi/bitbotdata/pokegifs/' + pokemon + '.gif')
-    except:
-        await bot.say('Hej, coś złego wystąpiło! Postaraj się to naprawić!')
         
 @bot.command(pass_context=True)
 async def Anonim(ctx, user : discord.Member, *, wiadomosc):
