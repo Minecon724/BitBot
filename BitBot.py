@@ -137,13 +137,15 @@ async def LiczbaSerwerów(ctx):
 async def Odwróć(ctx, *, tekst : str):
     tekst = tekst[::-1]
     await bot.say(tekst)
-
+    
 @bot.command(pass_context=True)
 async def Członkowie(ctx):
-    guild = ctx.message.server
-    ludzie = len([member for member in guild.members if not member.bot])
-    boty = len([member for member in guild.members if member.bot])
-    await bot.say("Ludzie: {}, boty: {}.".format(str(ludzie), str(boty)))
+    ludzie = len([member for member in ctx.message.server.members if not member.bot])
+    boty = len([member for member in ctx.message.server.members if member.bot])
+    jeden_procent = 100 / (ludzie + boty)
+    procent_ludzi = ludzie * jeden_procent
+    procent_botów = boty * jeden_procent
+    await bot.say("Ludzi jest {ludzie} ({procent_ludzi}%), a botów jest {boty} ({procent_botów}%).")
 
 @bot.command(pass_context=True)
 async def Statystyki(ctx):
