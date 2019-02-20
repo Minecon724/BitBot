@@ -560,7 +560,7 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             wartosc = "null"
         if co == "joindm":
             Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
-        else:
+        elid co == "removedm":
             Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
         await bot.add_reaction(ctx.message, "✅")
 
