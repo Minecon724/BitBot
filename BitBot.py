@@ -77,13 +77,13 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    if not BitBotHelper.Konfiguracje.JoinDM(member.server.id) == "null":
-        await bot.send_message(member, BitBotHelper.Konfiguracje.JoinDM(member.server.id))
+    if not Konfiguracje.JoinDM(member.server.id) == "null":
+        await bot.send_message(member, Konfiguracje.JoinDM(member.server.id))
 
 @bot.event
 async def on_member_remove(member):
-    if not BitBotHelper.Konfiguracje.RemoveDM(member.server.id) == "null":
-        await bot.send_message(member, BitBotHelper.Konfiguracje.RemoveDM(member.server.id))
+    if not Konfiguracje.RemoveDM(member.server.id) == "null":
+        await bot.send_message(member, Konfiguracje.RemoveDM(member.server.id))
 
 @bot.command(pass_context=True)
 async def LiteraPoLiterze(ctx, *, tekst):
