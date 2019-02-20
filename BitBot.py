@@ -550,8 +550,8 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             embed = discord.Embed(title="Konfiguruj bota:")
             if co == "joindm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.server.id)), inline=True)
-            else:
-                embed.add_field(name="Wartość to:", value="{}".format(Konfcje.RemoveDM(ctx.message.server.id)), inline=True) 
+            elif co == "removedm":
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True) 
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
             await bot.say(embed=embed)
             return
