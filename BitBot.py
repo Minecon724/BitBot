@@ -9,7 +9,7 @@ class Konfiguracje:
 
     def JoinDM(serwer):
         try:
-            plik = open(serwer, "r")
+            plik = open("JoinDM" + serwer, "r")
             return plik.read()
         except:
             return "null"
@@ -17,19 +17,19 @@ class Konfiguracje:
 
     def RemoveDM(serwer):
         try:
-            plik = open(serwer, "r")
+            plik = open("RemoveDM" + serwer, "r")
             return plik.read()
         except:
             return "null"
         plik.close()
 
     def UstawRemoveDM(serwer, wartosc):
-        plik = open(serwer, "w")
+        plik = open("RemoveDM" + serwer, "w")
         plik.write(wartosc)
         plik.close()
 
     def UstawJoinDM(serwer, wartosc):
-        plik = open(serwer, "w")
+        plik = open("JoinDM" + serwer, "w")
         plik.write(wartosc)
         plik.close()
 
