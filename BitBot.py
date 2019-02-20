@@ -75,6 +75,16 @@ async def on_ready():
     elif gos == 4:
         await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=3))
 
+@bot.event
+async def on_member_join(member):
+    if not BitBotHelper.Konfiguracje.JoinDM(member.server.id) == "null":
+        await bot.send_message(member, BitBotHelper.Konfiguracje.JoinDM(member.server.id))
+
+@bot.event
+async def on_member_remove(member):
+    if not BitBotHelper.Konfiguracje.RemoveDM(member.server.id) == "null":
+        await bot.send_message(member, BitBotHelper.Konfiguracje.RemoveDM(member.server.id))
+
 @bot.command(pass_context=True)
 async def LiteraPoLiterze(ctx, *, tekst):
     licznik = 1
