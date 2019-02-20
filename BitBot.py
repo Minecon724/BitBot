@@ -397,7 +397,7 @@ async def Pomoc(ctx, strona=None):
     if not strona == None:
         strona = int(strona)
     if strona == None or strona == 1:
-        embed = discord.Embed(title="Pomoc", description="Strona 1/2", color=0xff0000)
+        embed = discord.Embed(title="To jest Twoja pomoc, {}!".format(ctx.message.author.name), description="Strona 1/2", color=0xff0000)
         embed.add_field(name=prefix + "Spam <ilość spamu (liczba)> <spowolnienie (liczba)> <wiadomość (tekst)>", value="Spamuje wiadomościami.", inline=True)
         embed.add_field(name=prefix + "Anonim <użytkownik (użytkownik)> <wiadomość (tekst)>", value="Wyślij do kogoś wiadomość. Bez podpisu.", inline=True)
         embed.add_field(name=prefix + "Wybierz <wybory (tekst, wybór nie może mieć spacji)>", value="Losuje jedno słowo z podanych.", inline=True)
@@ -432,6 +432,7 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Członkowie", value="Liczba członków serwera.", inline=True)
         embed.add_field(name=prefix + "Serwer", value="Informacje o serwerze.", inline=True)
         embed.add_field(name=prefix + "ZgadnijLiczbę <maksymalna (liczba, opcjonalnie)>", value="Zgadnij liczbę!", inline=True)
+        embed.add_field(name=prefix + "Konfiguruj", value="Konfiguruj serwer i bota. Pomoc uzyskasz po wpisaniu komendy.", inline=True)
     elif not strona == None or not strona == 1 or not strona == 2:
         embed = discord.Embed(title="Pomoc", description="Strona {}/2".format(str(strona)), color=0xff0000)
         embed.set_footer(text="Nie znaleziono strony!")
@@ -548,10 +549,10 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         if l == "null":
             wartosc = "null"
         if co == "joindm":
-            BitBotHelper.Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
+            Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
         else:
-            BitBotHelper.Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
-        await bot.add_reaction(ctx.message, "âś…")
+            Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
+        await bot.add_reaction(ctx.message, "✅")
 
             
 async def uptime():
