@@ -5,6 +5,34 @@
 # Po trzecie, pewnie skopiujesz ten kod ;)
 # No dobra, to jest kod.
 
+class Konfiguracje:
+
+    def JoinDM(serwer):
+        try:
+            plik = open(serwer, "r")
+            return plik.read()
+        except:
+            return "null"
+        plik.close()
+
+    def RemoveDM(serwer):
+        try:
+            plik = open(serwer, "r")
+            return plik.read()
+        except:
+            return "null"
+        plik.close()
+
+    def UstawRemoveDM(serwer, wartosc):
+        plik = open(serwer, "w")
+        plik.write(wartosc)
+        plik.close()
+
+    def UstawJoinDM(serwer, wartosc):
+        plik = open(serwer, "w")
+        plik.write(wartosc)
+        plik.close()
+
 import time
 poczatek = time.monotonic()
 import os
@@ -496,6 +524,36 @@ async def Wyczyść(ctx, ilosc : int):
     except Exception as e:
             await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))            
 
+@bot.command(pass_context=True)
+async def Konfiguruj(ctx, co=None, *, wartosc=None):
+    if not ctx.message.author.server_permissions.manage_server:
+        await bot.say("Nie masz permisji do tego!")
+        return
+    if co == None:
+        embed = discord.Embed(title="Konfiguruj bota:")
+        embed.add_field(name="joindm", value="Prywatna wiadomość do nowego członka serwera.", inline=True)
+        embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
+        await bot.say(embed=embed)
+    elif co == "joindm" or co == "removedm":
+        if wartosc == None:
+            embed = discord.Embed(title="Konfiguruj bota:")
+            if co == "joindm":
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.server.id)), inline=True)
+            else:
+                embed.add_field(name="Wartość to:", value="{}".format(Konfcje.RemoveDM(ctx.message.server.id)), inline=True) 
+            embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
+            await bot.say(embed=embed)
+            return
+        l = str(wartosc).lower()
+        if l == "null":
+            wartosc = "null"
+        if co == "joindm":
+            BitBotHelper.Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
+        else:
+            BitBotHelper.Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
+        await bot.add_reaction(ctx.message, "âś…")
+
+            
 async def uptime():
     await bot.wait_until_ready()
     global uruchomiony
