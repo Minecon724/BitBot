@@ -1,4 +1,4 @@
-git+https://github.com/Rapptz/discord.py
+git+https://github.com/Rapptz/discord.py==0.16.12
 google
 psutil
 requests
