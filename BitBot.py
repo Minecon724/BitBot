@@ -75,6 +75,9 @@ spamy = 0
 
 @bot.event
 async def on_ready():
+    for srv in bot.servers:
+        if Konfiguracje.Spam(srv.id) == "":
+            Konfiguracje.ZmienSpam(srv.id, "niedozwolony")
     global uruchomionyw
     uruchomionyw = str(floor((time.monotonic() - poczatek) * 1000)) + "ms"
     print("BitBot jest gotowy.")
