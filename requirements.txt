@@ -1,4 +1,5 @@
 git+https://github.com/Rapptz/discord.py
+websockets==5.0
 google
 psutil
 requests
