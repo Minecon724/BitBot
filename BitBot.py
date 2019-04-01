@@ -341,7 +341,7 @@ async def BotLink(ctx):
     await bot.say("http://discord.gg/8hpE4xw")
 
 @bot.command(pass_context=True)
-async def Zaproś(ctx, kanal : discord.Channel):
+async def Zaproś(ctx, kanal : discord.TextChannel):
     try:
         zaproszenie = await bot.create_invite(destination = kanal)
         await bot.say(zaproszenie)
