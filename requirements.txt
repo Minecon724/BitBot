@@ -3,5 +3,5 @@ google
 psutil
 requests
 aiohttp
-websockets
+websockets==5.0
 chardet
