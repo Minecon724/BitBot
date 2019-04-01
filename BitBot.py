@@ -32,6 +32,19 @@ class Konfiguracje:
         plik = open("JoinDM" + serwer, "w")
         plik.write(wartosc)
         plik.close()
+    
+    def ZmienSpam(serwer, wartosc):
+        plik = open("Spam" + serwer, "w")
+        plik.write(wartosc)
+        plik.close()
+        
+    def Spam(serwer):
+        try:
+            plik = open("Spam" + serwer, "r")
+            return plik.read()
+        except:
+            return "null"
+        plik.close()
 
 import time
 poczatek = time.monotonic()
@@ -152,6 +165,8 @@ async def kek(ctx):
 
 @bot.command(pass_context=True)
 async def Spam(ctx, ilosc : int, cooldown : int, *, wiadomosc : str):
+    if Konfiguracje.Spam == "niedozwolony":
+        await bot.say("Spam nie jest dozwolony na tym serwerze!\nBo ktoś z uprawnieniem **Zarządzanie serwerem** tak chciał (lub po prostu nikt się nie interesuje konfiguracją bota).")
     licznik = 0
     global spamy
     while licznik < ilosc:
@@ -544,24 +559,31 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         embed = discord.Embed(title="Konfiguruj bota:")
         embed.add_field(name="joindm", value="Prywatna wiadomość do nowego członka serwera.", inline=True)
         embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
+        embed.add_field(name="spam", value="Pozwól na użycie komendy Spam (lub nie).")
         await bot.say(embed=embed)
-    elif co == "joindm" or co == "removedm":
+    elif co == "joindm" or co == "removedm" or co == "spam":
         if wartosc == None:
             embed = discord.Embed(title="Konfiguruj bota:")
             if co == "joindm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.server.id)), inline=True)
             elif co == "removedm":
-                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True) 
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True)
+            elif co == "spam":
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.Spam(ctx.message.server.id)), inline=True)
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
             await bot.say(embed=embed)
             return
         l = str(wartosc).lower()
-        if l == "null":
-            wartosc = "null"
         if co == "joindm":
             Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
         elif co == "removedm":
             Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
+        elif co == "spam":
+            if l == "dozwolony" or l == "niedozwolony":
+                Konfiguracje.ZmienSpam(ctx.message.server.id, wartosc)
+            else:
+                await bot.say("Wartość musi być *dozwolony* lub *niedozwolony*!")
+                return
         await bot.add_reaction(ctx.message, "✅")
 
             
