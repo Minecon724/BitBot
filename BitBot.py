@@ -218,7 +218,7 @@ async def Statystyki(ctx):
     await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
-async def Napisz(ctx, kanal : discord.Channel, *, wiadomosc):
+async def Napisz(ctx, kanal : discord.TextChannel, *, wiadomosc):
     try:
         await bot.send_message(kanal, wiadomosc)
         await bot.say("Napisałem **{}** w **<#{}>**.".format(wiadomosc, kanal.id))
