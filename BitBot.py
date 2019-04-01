@@ -165,8 +165,9 @@ async def kek(ctx):
 
 @bot.command(pass_context=True)
 async def Spam(ctx, ilosc : int, cooldown : int, *, wiadomosc : str):
-    if Konfiguracje.Spam == "niedozwolony":
+    if Konfiguracje.Spam(ctx.message.server.id) == "niedozwolony":
         await bot.say("Spam nie jest dozwolony na tym serwerze!\nBo ktoś z uprawnieniem **Zarządzanie serwerem** tak chciał (lub po prostu nikt się nie interesuje konfiguracją bota).")
+        return
     licznik = 0
     global spamy
     while licznik < ilosc:
