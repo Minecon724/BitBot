@@ -218,7 +218,7 @@ async def Statystyki(ctx):
     await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
-async def Napisz(ctx, kanal : discord.TextChannel, *, wiadomosc):
+async def Napisz(ctx, kanal : discord.Channel, *, wiadomosc):
     try:
         await bot.send_message(kanal, wiadomosc)
         await bot.say("Napisałem **{}** w **<#{}>**.".format(wiadomosc, kanal.id))
@@ -341,7 +341,7 @@ async def BotLink(ctx):
     await bot.say("http://discord.gg/8hpE4xw")
 
 @bot.command(pass_context=True)
-async def Zaproś(ctx, kanal : discord.TextChannel):
+async def Zaproś(ctx, kanal : discord.Channel):
     try:
         zaproszenie = await bot.create_invite(destination = kanal)
         await bot.say(zaproszenie)
