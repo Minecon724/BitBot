@@ -64,7 +64,7 @@ zaufani = ["233592407902388224"]
 nievip = "Hmm... Wygląda na to, że nie jesteś programistą BitBota."
 
 global rokrodzin
-rokurodzin = 2019
+rokurodzin = 2020
 
 prefix = "$$"
 
@@ -75,9 +75,6 @@ spamy = 0
 
 @bot.event
 async def on_ready():
-    for srv in bot.servers:
-        if Konfiguracje.Spam(srv.id) == "":
-            Konfiguracje.ZmienSpam(srv.id, "niedozwolony")
     global uruchomionyw
     uruchomionyw = str(floor((time.monotonic() - poczatek) * 1000)) + "ms"
     print("BitBot jest gotowy.")
@@ -118,10 +115,15 @@ async def Urodziny(ctx):
     dzisiaj = datetime.date.today()
     urodziny = datetime.date(rokurodzin, 4, 8)
     czasdourodzin = abs(urodziny - dzisiaj)
-    if czasdourodzin.days == 0:
-        await bot.say("Urodziny są dzisiaj! :tada:")
+    lata = int(str(abs(datetime.date(2018, 4, 8) - dzisiaj).days / 365)[0])
+    if lata > 1:
+        latastr = str(lata) + " lata"
     else:
-        await bot.say("Do urodzin pozostało {} dni.".format(str(czasdourodzin.days)))
+        latastr = str(lata) + " rok"
+    if czasdourodzin.days == 0:
+        await bot.say("Urodziny są dzisiaj! :tada: {}!".format(latastr))
+    else:
+        await bot.say("Do urodzin pozostało {} dni. Obecnie BitBot ma {}.".format(str(czasdourodzin.days), latastr))
 
 @bot.command(pass_context=True)
 async def Wybierz(ctx, *wybory):
@@ -139,11 +141,6 @@ async def Losuj(ctx, minimalny : int, maksymalny : int):
 @bot.command(pass_context=True)
 async def EmojiID(ctx, emoji : discord.Emoji):
     await bot.say("A ID emotki {} to... {}".format(str(emoji), str(emoji.id)))
-
-@bot.command(pass_context=True)
-async def CustomEmoji(ctx, ename, eid : int):
-    ename = ename.replace(":", "")
-    await bot.say("<:{}:{}>".format(ename, str(eid)))
 
 @bot.command(pass_context=True)
 async def Ping(ctx):
@@ -168,7 +165,7 @@ async def kek(ctx):
 
 @bot.command(pass_context=True)
 async def Spam(ctx, ilosc : int, cooldown : int, *, wiadomosc : str):
-    if Konfiguracje.Spam(ctx.message.server.id) == "niedozwolony":
+    if Konfiguracje.Spam(ctx.message.server.id) == "niedozwolony" or Konfiguracje.Spam(ctx.message.server.id) == "null":
         await bot.say("Spam nie jest dozwolony na tym serwerze!\nBo ktoś z uprawnieniem **Zarządzanie serwerem** tak chciał (lub po prostu nikt się nie interesuje konfiguracją bota).")
         return
     licznik = 0
@@ -248,20 +245,20 @@ async def Milionerzy(ctx):
         answer = 4
         question = "Jaki telefon jest najlepszy na świecie: 1) srajfon x 2) szajsung galaxy s9 3) hujawej p20 pro 4) nokija 3310 5) komputer"
     elif pytanie == 3:
-        answer = 4
-        question = "Jaki komputer jest najlepszy: 1) ajmak 2) srasus 3) hell 4) składak"
+        answer = 4 or 3
+        question = "Jaki komputer jest najlepszy: 1) ajmak 2) hujawej 3) BitBot 4) składak"
     elif pytanie == 4:
         answer = 2
-        question = "Co lepsze: 1) ENWIDJA GjeFordze 1080 2) Jintel HD Grafiks 620 3) AEMDE Radełon ER7"
+        question = "Co lepsze: 1) ENWIDJA GjeFordze 1080 2) Jintel HD Grafiks 620 3) AEMDE Radełon piećsetczydziesci"
     elif pytanie == 5:
         answer = 2
         question = "Czy jestem debilem: 1) Nie 2) Tak"
     elif pytanie == 6:
         answer = 1 or 2
-        question = "Co lepsze: 1) Kokaina 2) Marihuana"
+        question = "Co lepsze: 1) BitBot 2) BitBot"
     elif pytanie == 7:
-        answer = 2
-        question = "Co się robi: 1) zupe 2) loda 3) mleko 4) wode 5) telefony 6) płyty czy 7) gówno?"
+        answer = 2 or 1
+        question = "Żyjesz? 1) Nie 2) Nie 3) Tak"
     elif pytanie == 8:
         answer = 4
         question = "Najlepszy tekst wszech czasów: 1) Chyba ty 2) Spierdalaj 3) Śmieć 4) BitBot 5) Gówniarz 6) Chuj 7) a 8) Milionerzy 9) Dolary 10) Chorwacja 11) Kredki"
@@ -269,13 +266,13 @@ async def Milionerzy(ctx):
         answer = 2
         question = "Kochasz mnie? 1) Nie 2) Tak"
     elif pytanie == 10:
-        answer = 2
-        question = "Które słowo nie jest przekleństwem? 1) Kuźwa 2) Kurwa 3) a 4) Debil 5) BitBot 6) Hujawej 7) Szajsung najlepszy 8) Masza 9) Kredki 10) Farbki"
+        answer = 5
+        question = "Które słowo nie jest przekleństwem? 1) Kuźwa 2) Kurwa 3) a 4) Debil 5) BitBot 6) Masza"
     elif pytanie == 11:
         answer = 9
-        question = "Jaki jest najlepszy komunikator? 1) Skuj dupe 2) Imprezord 3) Gówno Gówno 4) ŁacAp 5) Masażer 6) Srapczat 7) Tłiter 8) Fejsbug 9) Wiadomości 10) Pokémon Duel"
+        question = "Jaki jest najlepszy komunikator? 1) Skuj dupe 2) Imprezord 3) Gówno Gówno 4) ŁacAp 5) Masażer 6) Srapczat 7) Tłiter 8) Fejsbug 9) Wiadomości"
     elif pytanie == 12:
-        answer = 1
+        answer = 1 or 2
         question = "Kim jesteś? 1) CHUJEM czy 2) DEBILEM?"
     await bot.send_message(ctx.message.channel, "{}".format(question))
 
@@ -319,23 +316,6 @@ async def ZgadnijLiczbę(ctx, max:int=None):
         elif int(strzal.content) > liczba:
             await bot.say("Wylosowana liczba jest mniejsza.")
         
-@bot.command(pass_context=True)
-async def Anonim(ctx, user : discord.Member, *, wiadomosc):
-    try:
-        await bot.send_message(user, wiadomosc)
-        await bot.say("Wysłałem *" + wiadomosc + "* do **{}**.".format(user.name))
-    except Exception as e:
-        await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-
-@bot.command(pass_context=True)
-async def Wyślij(ctx, user : discord.Member, *, wiadomosc):
-    try:
-        skladnia = "Hej, {} pisze: {}".format(ctx.message.author.name, wiadomosc)
-        await bot.send_message(user, skladnia)
-        await bot.say("Wysłałem *" + wiadomosc + "* do **{}**.".format(user.name))
-    except Exception as e:
-        await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-
 @bot.command(pass_context=True)
 async def Powiedz(ctx, *, wiadomosc):
     await bot.say(wiadomosc)
@@ -427,18 +407,14 @@ async def Pomoc(ctx, strona=None):
         strona = int(strona)
     if strona == None or strona == 1:
         embed = discord.Embed(title="To jest Twoja pomoc, {}!".format(ctx.message.author.name), description="Strona 1/2", color=0xff0000)
-        embed.add_field(name=prefix + "Spam <ilość spamu (liczba)> <spowolnienie (liczba)> <wiadomość (tekst)>", value="Spamuje wiadomościami.", inline=True)
-        embed.add_field(name=prefix + "Anonim <użytkownik (użytkownik)> <wiadomość (tekst)>", value="Wyślij do kogoś wiadomość. Bez podpisu.", inline=True)
         embed.add_field(name=prefix + "Wybierz <wybory (tekst, wybór nie może mieć spacji)>", value="Losuje jedno słowo z podanych.", inline=True)
-        embed.add_field(name=prefix + "EmojiID <emotka (emoji)>", value="Sprawdza ID emotki. Działa tylko z emoji na serwerze.", inline=True)
-        embed.add_field(name=prefix + "CustomEmoji <emotka z innego serwera (emoji lub tekst)> <id emotki z innego serwera (liczba)>", value="Wysyła emoji z innego serwera.", inline=True)
+        embed.add_field(name=prefix + "EmojiID <emotka (emoji)>", value="Sprawdza ID emotki. Działa tylko z emoji na serwerze.", inline=True)e="Wysyła emoji z innego serwera.", inline=True)
         embed.add_field(name=prefix + "Ping", value=":ping_pong: Pong!", inline=True)
         embed.add_field(name=prefix + "Gra/Słucha/Ogląda/Streamuje <gra (tekst)>", value="Ustawia grę.", inline=True)
         embed.add_field(name=prefix + "Napisz <kanał (kanał)> <wiadomość (tekst)>", value="Wysyła wiadomość do określonego kanału.", inline=True)
         embed.add_field(name=prefix + "Nazwa <użytkownik (użytkownik)> <nowa nazwa (tekst)>", value="Zmień nazwę użytkownika.", inline=True)
         embed.add_field(name=prefix + "Statystyki", value="Statystyki bota.", inline=True)
         embed.add_field(name=prefix + "LiczbaSerwerów", value="Liczba serwerów na których jestem.", inline=True)
-        embed.add_field(name=prefix + "Wyślij <użytkownik (użytkownik)> <wiadomość (tekst)>", value="Wyślij użytkownikowi wiadomość. Z podpisem.", inline=True)
         embed.add_field(name=prefix + "Serwery", value="Lista serwerów, na których jestem. Nie bój się, nikt nie ma do nich dostępu.", inline=True)
         embed.add_field(name=prefix + "Urodziny", value="Licznik dni do moich urodzin!", inline=True)
         embed.add_field(name=prefix + "Szukaj <fraza (tekst)>", value="Wyszukaj coś w Google.", inline=True)
@@ -466,11 +442,6 @@ async def Pomoc(ctx, strona=None):
         embed = discord.Embed(title="Pomoc", description="Strona {}/2".format(str(strona)), color=0xff0000)
         embed.set_footer(text="Nie znaleziono strony!")
     await bot.say(embed=embed)
-
-@bot.command(pass_context=True)
-async def Zasady(ctx):
-    if ctx.message.server.id == "407103788772622336":
-        await bot.say("1. Szanuj i nie obrażaj innych graczy\n2. Nie proś o rangi\n3. Nie przeklinaj (wolno po 20:00 do 06:00 czasu polskiego)\n4. Nie spamuj i nie flooduj.\n5. ABSOLUTNY ZAKAZ REKLAMOWANIA SERVERÓW I KANAŁÓW\n6. Nie nadużywaj wzmianek @here i @everyone\n\n--------Kary\n1.Upomnienie\n2.Upomnienie\n3.Upomnienie\n4.Mute na 1h\n5.Mute na 6h\n6.Mute na 12h\n7.mute na 24h\n8.Ban na 24h\n9.Ban na 7dni\n10.Ban na 30dni\n11.Ban permanentny")
 
 @bot.command(pass_context=True)
 async def Informacje(ctx, *, user:discord.User=None):
@@ -563,17 +534,14 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         embed = discord.Embed(title="Konfiguruj bota:")
         embed.add_field(name="joindm", value="Prywatna wiadomość do nowego członka serwera.", inline=True)
         embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
-        embed.add_field(name="spam", value="Pozwól na użycie komendy Spam (lub nie).")
         await bot.say(embed=embed)
-    elif co == "joindm" or co == "removedm" or co == "spam":
+    elif co == "joindm" or co == "removedm":
         if wartosc == None:
             embed = discord.Embed(title="Konfiguruj bota:")
             if co == "joindm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.server.id)), inline=True)
             elif co == "removedm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True)
-            elif co == "spam":
-                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.Spam(ctx.message.server.id)), inline=True)
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
             await bot.say(embed=embed)
             return
@@ -582,12 +550,6 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
         elif co == "removedm":
             Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
-        elif co == "spam":
-            if l == "dozwolony" or l == "niedozwolony":
-                Konfiguracje.ZmienSpam(ctx.message.server.id, wartosc)
-            else:
-                await bot.say("Wartość musi być *dozwolony* lub *niedozwolony*!")
-                return
         await bot.add_reaction(ctx.message, "✅")
 
             
