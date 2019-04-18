@@ -400,7 +400,7 @@ async def Pomoc(ctx, strona=None):
     if strona == None or strona == 1:
         embed = discord.Embed(title="To jest Twoja pomoc, {}!".format(ctx.message.author.name), description="Strona 1/2", color=0xff0000)
         embed.add_field(name=prefix + "Wybierz <wybory (tekst, wybór nie może mieć spacji)>", value="Losuje jedno słowo z podanych.", inline=True)
-        embed.add_field(name=prefix + "EmojiID <emotka (emoji)>", value="Sprawdza ID emotki. Działa tylko z emoji na serwerze.", inline=True)e="Wysyła emoji z innego serwera.", inline=True)
+        embed.add_field(name=prefix + "EmojiID <emotka (emoji)>", value="Sprawdza ID emotki. Działa tylko z emoji na serwerze.", inline=True)
         embed.add_field(name=prefix + "Ping", value=":ping_pong: Pong!", inline=True)
         embed.add_field(name=prefix + "Gra/Słucha/Ogląda/Streamuje <gra (tekst)>", value="Ustawia grę.", inline=True)
         embed.add_field(name=prefix + "Nazwa <użytkownik (użytkownik)> <nowa nazwa (tekst)>", value="Zmień nazwę użytkownika.", inline=True)
