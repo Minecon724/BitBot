@@ -219,14 +219,6 @@ async def Statystyki(ctx):
     await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
-async def Napisz(ctx, kanal : discord.Channel, *, wiadomosc):
-    try:
-        await bot.send_message(kanal, wiadomosc)
-        await bot.say("Napisałem **{}** w **<#{}>**.".format(wiadomosc, kanal.id))
-    except Exception as e:
-        await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-
-@bot.command(pass_context=True)
 async def Pytanie(ctx, *, zapytaj):
     try:
         msg = await bot.send_message(ctx.message.channel, zapytaj)
@@ -411,7 +403,6 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "EmojiID <emotka (emoji)>", value="Sprawdza ID emotki. Działa tylko z emoji na serwerze.", inline=True)e="Wysyła emoji z innego serwera.", inline=True)
         embed.add_field(name=prefix + "Ping", value=":ping_pong: Pong!", inline=True)
         embed.add_field(name=prefix + "Gra/Słucha/Ogląda/Streamuje <gra (tekst)>", value="Ustawia grę.", inline=True)
-        embed.add_field(name=prefix + "Napisz <kanał (kanał)> <wiadomość (tekst)>", value="Wysyła wiadomość do określonego kanału.", inline=True)
         embed.add_field(name=prefix + "Nazwa <użytkownik (użytkownik)> <nowa nazwa (tekst)>", value="Zmień nazwę użytkownika.", inline=True)
         embed.add_field(name=prefix + "Statystyki", value="Statystyki bota.", inline=True)
         embed.add_field(name=prefix + "LiczbaSerwerów", value="Liczba serwerów na których jestem.", inline=True)
