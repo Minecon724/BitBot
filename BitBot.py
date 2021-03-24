@@ -1,9 +1,5 @@
-# Hej, poczekaj!
-# Mam ci coś do powiedzenia!
-# Po pierwsze, wersja na Heroku jest bardzo okrojona.
-# Po drugie, nie ukradniesz mi tokenu.
-# Po trzecie, pewnie skopiujesz ten kod ;)
-# No dobra, to jest kod.
+import time
+poczatek = time.monotonic()
 
 class Konfiguracje:
 
@@ -33,22 +29,10 @@ class Konfiguracje:
         plik.write(wartosc)
         plik.close()
     
-    def ZmienSpam(serwer, wartosc):
-        plik = open("Spam" + serwer, "w")
-        plik.write(wartosc)
-        plik.close()
-        
-    def Spam(serwer):
-        try:
-            plik = open("Spam" + serwer, "r")
-            return plik.read()
-        except:
-            return "null"
-        plik.close()
 
-import time
-poczatek = time.monotonic()
 import os
+token = os.environ.get('TOKEN')
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -64,49 +48,44 @@ zaufani = ["233592407902388224"]
 nievip = "Hmm... Wygląda na to, że nie jesteś programistą BitBota."
 
 global rokrodzin
-rokurodzin = 2020
+rokurodzin = 2021
 
 prefix = "$$"
 
 bot = commands.Bot(command_prefix=prefix)
-
-global spamy
-spamy = 0
 
 @bot.event
 async def on_ready():
     global uruchomionyw
     uruchomionyw = str(floor((time.monotonic() - poczatek) * 1000)) + "ms"
     print("BitBot jest gotowy.")
-    gos = random.randint(1, 4)
+    gos = random.randint(1, 3)
     if gos == 1:
-        await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=0))
+        await bot.change_presence(activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds)))))
     elif gos == 2:
-        await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=1))
+        await bot.change_presence(activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=discord.ActivityType.listening))
     elif gos == 3:
-        await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=2))
-    elif gos == 4:
-        await bot.change_presence(game=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.servers))), type=3))
+        await bot.change_presence(activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=discord.ActivityType.watching))
 
 @bot.event
 async def on_member_join(member):
-    if not Konfiguracje.JoinDM(member.server.id) == "null":
-        await bot.send_message(member, Konfiguracje.JoinDM(member.server.id))
+    if not Konfiguracje.JoinDM(member.guild.id) == "null":
+        await member.send(Konfiguracje.JoinDM(member.guild.id))
 
 @bot.event
 async def on_member_remove(member):
-    if not Konfiguracje.RemoveDM(member.server.id) == "null":
-        await bot.send_message(member, Konfiguracje.RemoveDM(member.server.id))
+    if not Konfiguracje.RemoveDM(member.guild.id) == "null":
+        await member.send(Konfiguracje.RemoveDM(member.guild.id))
 
 @bot.command(pass_context=True)
 async def LiteraPoLiterze(ctx, *, tekst):
     licznik = 1
     wiadomosc = str(tekst[0])
-    msg = await bot.say(wiadomosc)
+    msg = await ctx.message.channel.send(wiadomosc)
     while licznik < len(tekst):
         await asyncio.sleep(0.5)
         wiadomosc = wiadomosc + str(tekst[licznik])
-        await bot.edit_message(msg, wiadomosc)
+        await msg.edit(wiadomosc)
         licznik = licznik + 1
 
 @bot.command(pass_context=True)
@@ -121,86 +100,62 @@ async def Urodziny(ctx):
     else:
         latastr = str(lata) + " rok"
     if czasdourodzin.days == 0:
-        await bot.say("Urodziny są dzisiaj! :tada: {}!".format(latastr))
+        await ctx.reply("Urodziny są dzisiaj! :tada: {}!".format(latastr))
     else:
-        await bot.say("Do urodzin pozostało {} dni. Obecnie BitBot ma {}.".format(str(czasdourodzin.days), latastr))
+        await ctx.reply("Do urodzin pozostało {} dni. Obecnie BitBot ma {}.".format(str(czasdourodzin.days), latastr))
 
 @bot.command(pass_context=True)
 async def Wybierz(ctx, *wybory):
-    await bot.say("Hmm... Wybieram **{}**.".format(str(random.choice(wybory))))
+    await ctx.reply("Hmm... Wybieram **{}**.".format(str(random.choice(wybory))))
 
 @bot.command(pass_context=True)
 async def Embed(ctx, *, tekst):
     embed = discord.Embed(title=str(tekst))
-    await bot.say(embed=embed)
+    await ctx.send(embed=embed)
 
 @bot.command(pass_context=True)
 async def Losuj(ctx, minimalny : int, maksymalny : int):
-    await bot.say("Wylosowana liczba to {}.".format(str(random.randint(minimalny, maksymalny))))
+    await ctx.reply("Wylosowana liczba to {}.".format(str(random.randint(minimalny, maksymalny))))
 
 @bot.command(pass_context=True)
 async def EmojiID(ctx, emoji : discord.Emoji):
-    await bot.say("A ID emotki {} to... {}".format(str(emoji), str(emoji.id)))
+    await ctx.reply("A ID emotki {} to... {}".format(str(emoji), str(emoji.id)))
 
 @bot.command(pass_context=True)
 async def Ping(ctx):
     before = time.monotonic()
-    message = await bot.say("Czekaj...")
+    message = await ctx.reply("Czekaj...")
     ping = (time.monotonic() - before) * 1000
-    await bot.edit_message(message, "Pong! :ping_pong: **{}ms**".format(str(floor(ping))))
-
-@bot.command(pass_context=True)
-async def LiveUptime(ctx):
-    if ctx.message.author.id in zaufani:
-        msg = await bot.say(uptimemsg)
-        while True:
-            await asyncio.sleep(1)
-            await bot.edit_message(msg, uptimemsg)
-    else:
-        await bot.say(nievip)
-
-@bot.command(pass_context=True)
-async def kek(ctx):
-    await bot.say("Hey I'm MEE6, the Discord bot!")
-
-@bot.command(pass_context=True)
-async def Spam(ctx, ilosc : int, cooldown : int, *, wiadomosc : str):
-    if Konfiguracje.Spam(ctx.message.server.id) == "niedozwolony" or Konfiguracje.Spam(ctx.message.server.id) == "null":
-        await bot.say("Spam nie jest dozwolony na tym serwerze!\nBo ktoś z uprawnieniem **Zarządzanie serwerem** tak chciał (lub po prostu nikt się nie interesuje konfiguracją bota).")
-        return
-    licznik = 0
-    global spamy
-    while licznik < ilosc:
-        await bot.say(wiadomosc)
-        licznik = licznik + 1
-        spamy = spamy + 1
-        await asyncio.sleep(cooldown)
-
+    await msg.edit("Pong! :ping_pong: **{}ms**".format(str(floor(ping))))
+ 
 @bot.command(pass_context=True)
 async def Serwery(ctx):
-    serwery = list(bot.servers)
-    if ctx.message.author.id == "233592407902388224":
+    if ctx.message.author.id in zaufani:
+        await ctx.reply("Wysłałem listę serwerów do ciebie.")
+        wysl = ""
+        serwery = list(bot.guilds)
+        for serwer in serwery:
+            wysl += serwer.name + "\n
         for x in range(len(serwery)):
-            await bot.send_message(ctx.message.author, str(serwery[x-1].name))
-            await bot.say("Wysłałem listę serwerów do ciebie.")
+            await ctx.message.author.send(wysl)
 
 @bot.command(pass_context=True)
 async def LiczbaSerwerów(ctx):
-    await bot.say("<@432565925934268416> jest na {} serwerach.".format(str(len(bot.servers))))
+    await ctx.reply("<@432565925934268416> jest na {} serwerach.".format(str(len(bot.guilds))))
 
 @bot.command(pass_context=True)
 async def Odwróć(ctx, *, tekst : str):
     tekst = tekst[::-1]
-    await bot.say(tekst)
+    await ctx.reply(tekst)
     
 @bot.command(pass_context=True)
 async def Członkowie(ctx):
-    ludzie = len([member for member in ctx.message.server.members if not member.bot])
-    boty = len([member for member in ctx.message.server.members if member.bot])
+    ludzie = len([member for member in ctx.message.guild.members if not member.bot])
+    boty = len([member for member in ctx.message.guild.members if member.bot])
     jeden_procent = 100 / (ludzie + boty)
     procent_ludzi = ludzie * jeden_procent
     procent_botów = boty * jeden_procent
-    await bot.say("Ludzi jest {} ({}%), a botów jest {} ({}%).".format(ludzie, floor(procent_ludzi), boty, floor(procent_botów)))
+    await ctx.reply("Ludzi jest {} ({}%), a botów jest {} ({}%).".format(ludzie, floor(procent_ludzi), boty, floor(procent_botów)))
 
 @bot.command(pass_context=True)
 async def Statystyki(ctx):
@@ -211,21 +166,20 @@ async def Statystyki(ctx):
     embed.add_field(name="Prefix", value="{}".format(prefix), inline=True)
     embed.add_field(name="Jestem online", value="{}".format(uptimemsg), inline=True)
     embed.add_field(name="Uruchomiony od", value="{}".format(uruchomiony), inline=True)
-    embed.add_field(name="Spamy czasu bota", value="{}".format(str(spamy)), inline=True)
     embed.add_field(name="Czas uruchomienia", value="{}".format(uruchomionyw), inline=True)
     embed.add_field(name="Strefa czasowa", value="{}".format(str(datetime.datetime.now(datetime.timezone.utc).astimezone().tzname())), inline=True)
-    embed.add_field(name="Obciążenie procesora", value="{}".format(str(psutil.cpu_percent())), inline=True)
-    embed.add_field(name="Twórca", value="Minecon724#2556", inline=True)
-    await bot.say(embed=embed)
+    embed.add_field(name="Obciążenie procesora", value="{}%".format(str(psutil.cpu_percent())), inline=True)
+    embed.add_field(name="Twórca", value="Minecon724#2477", inline=True)
+    await ctx.reply(embed=embed)
 
 @bot.command(pass_context=True)
 async def Pytanie(ctx, *, zapytaj):
     try:
-        msg = await bot.send_message(ctx.message.channel, zapytaj)
-        await bot.add_reaction(msg, "❎")
-        await bot.add_reaction(msg, "✅")
+        msg = await ctx.send(zapytaj)
+        await msg.add_reaction("❎")
+        await msg.add_reaction("✅")
     except Exception as e:
-        await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+        await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
 
 @bot.command(pass_context=True)
 async def Milionerzy(ctx):
@@ -266,63 +220,69 @@ async def Milionerzy(ctx):
     elif pytanie == 12:
         answer = 1 or 2
         question = "Kim jesteś? 1) CHUJEM czy 2) DEBILEM?"
-    await bot.send_message(ctx.message.channel, "{}".format(question))
+    await ctx.reply("{}".format(question))
 
     def guess_check(m):
-        return m.content.isdigit()
+        return m.content.isdigit() and m.author == ctx.message.author and m.channel == ctx.message.channel
         
-    guess = await bot.wait_for_message(timeout=10.0, author=ctx.message.author, check=guess_check)
-    if guess is None:
-        fmt = 'Czas minął!'
-        await bot.send_message(ctx.message.channel, fmt)
+    try:
+        guess = await bot.wait_for('message', timeout=15.0, check=guess_check)
+    except asyncio.TimeoutError:
+        await ctx.reply("Czas minął!")
         return
     if int(guess.content) == answer:
-        await bot.send_message(ctx.message.channel, 'Wygrałeś {}zł!'.format(random.randint(1, 1000000)))
+        await guess.reply('Wygrałeś {}zł!'.format(random.randint(1, 1000000)))
     else:
-        await bot.send_message(ctx.message.channel, 'Niepoprawna odpowiedź.')
+        await guess.reply('Niepoprawna odpowiedź.')
 
 @bot.command(pass_context=True)
 async def ZgadnijLiczbę(ctx, max:int=None):
     def guess_check(m):
-        return m.content.isdigit()
+        return m.content.isdigit() and m.author == ctx.message.author and m.channel == ctx.message.channel
     if max is None:
         liczba = random.randint(0, 1000)
     else:
         liczba = random.randint(0, max)
     zgadnieta = False
     proby = 0
-    await bot.say("Zacznij zgadywać.")
+    await ctx.reply("Zacznij zgadywać.")
     while not zgadnieta:
-        strzal = await bot.wait_for_message(timeout=15.0, author=ctx.message.author, check=guess_check)
+        try:
+            strzal = await bot.wait_for('message', timeout=15.0, check=guess_check)
+        except asyncio.TimeoutError:
+            await ctx.reply("Czas minął!")
+            return
         proby = proby + 1
         if int(strzal.content) == liczba:
             if proby == 1:
-                await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to 1 próbę.")
+                await strzal.reply("Gratulacje! Odgadłeś liczbę! Zajęło ci to 1 próbę.")
             elif proby < 5:
-                await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} próby.".format(str(proby)))
+                await strzal.reply("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} próby.".format(str(proby)))
             else:
-                await bot.say("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} prób.".format(str(proby)))
+                await strzal.reply("Gratulacje! Odgadłeś liczbę! Zajęło ci to {} prób.".format(str(proby)))
             zgadnieta = True
         elif int(strzal.content) < liczba:
-            await bot.say("Wylosowana liczba jest większa.")
+            await strzal.reply("Wylosowana liczba jest większa.")
         elif int(strzal.content) > liczba:
-            await bot.say("Wylosowana liczba jest mniejsza.")
+            await strzal.reply("Wylosowana liczba jest mniejsza.")
         
 @bot.command(pass_context=True)
 async def Powiedz(ctx, *, wiadomosc):
-    await bot.say(wiadomosc)
+    await ctx.reply(wiadomosc)
 
 @bot.command(pass_context=True)
 async def BotLink(ctx):
-    await bot.say("http://discord.gg/8hpE4xw")
+    await ctx.reply("http://discord.gg/8hpE4xw")
 
 @bot.command(pass_context=True)
-async def Zaproś(ctx, kanal : discord.Channel):
+async def Zaproś(ctx, kanal):
     try:
-        zaproszenie = await bot.create_invite(destination = kanal)
-        await bot.say(zaproszenie)
+        if not type(kanal) == discord.TextChannel:
+            raise discord.InvalidArgument("Argument musi być kanałem tekstowym")
+        zaproszenie = await kanal.create_invite()
+        await ctx.reply(zaproszenie)
     except Exception as e:
-        await bot.say("Wystąpił błąd: \n```{}: {}```".format(type(e).__name__, e))
+        await ctx.reply("Wystąpił błąd: \n```{}: {}```".format(type(e).__name__, e))
 
 @bot.command(pass_context=True)
 async def Gra(ctx, *, status):
@@ -334,10 +294,10 @@ async def Gra(ctx, *, status):
         status = status.replace("%servers%", str(len(bot.servers)))
         status = status.replace("%prefix%", prefix)
         status = status.replace("%urodziny%", str(czasdourodzin.days))
-        await bot.change_presence(game=discord.Game(name=status, type=0))
-        await bot.say("Status zmieniony na: *W grze **" + status + "***")
+        await bot.change_presence(activity=discord.Game(name=status))
+        await ctx.reply("Status zmieniony na: *W grze **" + status + "***")
     else:
-        await bot.say(nievip)
+        await ctx.reply(nievip)
 
 @bot.command(pass_context=True)
 async def Streamuje(ctx, *, status):
@@ -349,10 +309,10 @@ async def Streamuje(ctx, *, status):
         status = status.replace("%servers%", str(len(bot.servers)))
         status = status.replace("%prefix%", prefix)
         status = status.replace("%urodziny%", str(czasdourodzin.days))
-        await bot.change_presence(game=discord.Game(name=status, type=1))
-        await bot.say("Status zmieniony na: *Streamuje **" + status + "***")
+        await bot.change_presence(activity=discord.Game(name=status, type=discord.ActivityType.streaming))
+        await ctx.reply("Status zmieniony na: *Streamuje **" + status + "***")
     else:
-        await bot.say(nievip)
+        await ctx.reply(nievip)
 
 @bot.command(pass_context=True)
 async def Słucha(ctx, *, status):
@@ -364,10 +324,10 @@ async def Słucha(ctx, *, status):
         status = status.replace("%servers%", str(len(bot.servers)))
         status = status.replace("%prefix%", prefix)
         status = status.replace("%urodziny%", str(czasdourodzin.days))
-        await bot.change_presence(game=discord.Game(name=status, type=2))
-        await bot.say("Status zmieniony na: *Słucha **" + status + "***")
+        await bot.change_presence(activity=discord.Game(name=status, type=discord.ActivityType.listening))
+        await ctx.reply("Status zmieniony na: *Słucha **" + status + "***")
     else:
-        await bot.say(nievip)
+        await ctx.reply(nievip)
 
 @bot.command(pass_context=True)
 async def Ogląda(ctx, *, status):
@@ -379,18 +339,18 @@ async def Ogląda(ctx, *, status):
         status = status.replace("%servers%", str(len(bot.servers)))
         status = status.replace("%prefix%", prefix)
         status = status.replace("%urodziny%", str(czasdourodzin.days))
-        await bot.change_presence(game=discord.Game(name=status, type=3))
-        await bot.say("Status zmieniony na: *Ogląda **" + status + "***")
+        await bot.change_presence(activity=discord.Game(name=status, type=discord.ActivityType.watching))
+        await ctx.reply("Status zmieniony na: *Ogląda **" + status + "***")
     else:
-        await bot.say(nievip)
+        await ctx.reply(nievip)
 
 @bot.command(pass_context=True)
 async def Szukaj(ctx, *, fraza):
-    message = await bot.say("Szukam... :mag:")
+    message = await ctx.reply("Szukam... :mag:")
     before = time.monotonic()
     for url in search(fraza):
         ping = (time.monotonic() - before) * 1000
-        await bot.edit_message(message, url + " znalazłem w **{}ms**".format(str(floor(ping))))
+        await message.edit(url + " znalazłem w **{}ms**".format(str(floor(ping))))
         break
 
 @bot.command(pass_context=True)
@@ -411,7 +371,6 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Szukaj <fraza (tekst)>", value="Wyszukaj coś w Google.", inline=True)
         embed.add_field(name=prefix + "Pytanie <pytanie (tekst)>", value="Zapytaj ludzi pytaniem tak/nie.", inline=True)
         embed.add_field(name=prefix + "BotLink", value="Masz problem? Wykonaj tą komendę!", inline=True)
-        embed.add_field(name=prefix + "LiveUptime", value="Czas bota na żywo.", inline=True)
         embed.add_field(name=prefix + "Odwróć <tekst (tekst)>", value="Odwróć tekst!", inline=True)
         embed.add_field(name=prefix + "Zaproś <kanał (kanał)>", value="Utwórz zaproszenie do serwera.", inline=True)
         embed.add_field(name=prefix + "Milionerzy", value="Sprawdź to. Nie polecam.", inline=True)
@@ -419,9 +378,9 @@ async def Pomoc(ctx, strona=None):
         embed.add_field(name=prefix + "Powiedz <tekst (tekst)>", value="Powiem coś.", inline=True)
         embed.add_field(name=prefix + "Losuj <liczba1 (liczba)> <liczba2 (liczba)>", value="Wylosuj liczbę.", inline=True)
         embed.add_field(name=prefix + "LiteraPoLiterze <tekst (tekst)>", value="Bardzo fajna komenda!", inline=True)
+        embed.add_field(name=prefix + "Informacje <użytkownik (użytkownik, opcjonalnie)>", value="Informacje o użytkowniku.", inline=True)
     elif strona == 2:
         embed = discord.Embed(title="Pomoc", description="Strona 2/2", color=0xff0000)
-        embed.add_field(name=prefix + "Informacje <użytkownik (użytkownik, opcjonalnie)>", value="Informacje o użytkowniku.", inline=True)
         embed.add_field(name=prefix + "Wykop <użytkownik (użytkownik)>", value="Wykop użytkownika.", inline=True)
         embed.add_field(name=prefix + "Zbanuj <użytkownik (użytkownik)>", value="Zbanuj użytkownika.", inline=True)
         embed.add_field(name=prefix + "Wyczyść <ilość (liczba)>", value="Czyści czat. Nie usuwa wiadomości sprzed 14 dni.", inline=True)
@@ -432,7 +391,7 @@ async def Pomoc(ctx, strona=None):
     elif not strona == None or not strona == 1 or not strona == 2:
         embed = discord.Embed(title="Pomoc", description="Strona {}/2".format(str(strona)), color=0xff0000)
         embed.set_footer(text="Nie znaleziono strony!")
-    await bot.say(embed=embed)
+    await ctx.reply(embed=embed)
 
 @bot.command(pass_context=True)
 async def Informacje(ctx, *, user:discord.User=None):
@@ -447,85 +406,80 @@ async def Informacje(ctx, *, user:discord.User=None):
     embed.add_field(name="Najwyższa rola użytkownika na tym serwerze:", value="{}".format(user.top_role), inline=True)
     embed.set_thumbnail(url=user.avatar_url)
     embed.set_footer(text=user)
-    await bot.say(embed=embed)
+    await ctx.reply(embed=embed)
 
 @bot.command(pass_context=True)
 async def Serwer(ctx):
-    embed = discord.Embed(title="{}".format(ctx.message.server.name), description="Informacje")
-    embed.add_field(name="ID serwera:", value="{}".format(str(ctx.message.server.id)), inline=True)
-    embed.add_field(name="Ilość ról:", value="{}".format(str(len(ctx.message.server.roles))), inline=True)
-    embed.add_field(name="Ludzi na serwerze:", value="{}".format(str(len([member for member in ctx.message.server.members if not member.bot]))), inline=True)
-    embed.add_field(name="Botów na serwerze:", value="{}".format(str(len([member for member in ctx.message.server.members if member.bot]))), inline=True)
-    embed.set_thumbnail(url=ctx.message.server.icon_url)
-    embed.set_footer(text=ctx.message.server.name)
-    await bot.say(embed=embed)
+    embed = discord.Embed(title="{}".format(ctx.message.guild.name), description="Informacje")
+    embed.add_field(name="ID serwera:", value="{}".format(str(ctx.message.guild.id)), inline=True)
+    embed.add_field(name="Ilość ról:", value="{}".format(str(len(ctx.message.guild.roles))), inline=True)
+    embed.add_field(name="Ludzi na serwerze:", value="{}".format(str(len([member for member in ctx.message.guild.members if not member.bot]))), inline=True)
+    embed.add_field(name="Botów na serwerze:", value="{}".format(str(len([member for member in ctx.message.guild.members if member.bot]))), inline=True)
+    embed.set_thumbnail(url=ctx.message.guild.icon_url)
+    embed.set_footer(text=ctx.message.guild.name)
+    await ctx.reply(embed=embed)
 
 @bot.command(pass_context=True)
 async def Nazwa(ctx, user: discord.Member, *, nazwa):
     try:
-        if ctx.message.author.server_permissions.manage_nicknames:
-            await bot.change_nickname(member=user, nickname=nazwa)
-            await bot.add_reaction(ctx.message, "✅")
+        if ctx.message.author.guild_permissions.manage_nicknames:
+            await user.edit(nick=nazwa)
+            await ctx.message.add_reaction("✅")
         else:
-            await bot.say("Nie masz permisji do tego!")
-            await bot.add_reaction(ctx.message, "❎")
+            await ctx.reply("Nie masz permisji do tego!")
+            await ctx.message.add_reaction("❎")
     except Exception as e:
-        await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-        await bot.add_reaction(ctx.message, "❎")
+        await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+        await ctx.message.add_reaction("❎")
 
 @bot.command(pass_context=True)
-async def Wykop(ctx, user: discord.Member):
-    if ctx.message.author.server_permissions.kick_members:
+async def Wykop(ctx, user: discord.Member, *, powod=None):
+    if ctx.message.author.guild_permissions.kick_members:
         try:
-            await bot.kick(user)
-            await bot.add_reaction(ctx.message, "✅")
+            await user.kick(powod)
+            await ctx.message.add_reaction("✅")
         except Exception as e:
-            await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-            await bot.add_reaction(ctx.message, "❎")
+            await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+            await ctx.message.add_reaction("❎")
     else:
-        await bot.say("Nie masz permisji do tego!")
-        await bot.add_reaction(ctx.message, "❎")
+        await ctx.reply("Nie masz permisji do tego!")
+        await ctx.message.add_reaction("❎")
 
 @bot.command(pass_context=True)
 async def Zbanuj(ctx, user: discord.Member, *, powod=None):
-    if ctx.message.author.server_permissions.ban_members:
+    if ctx.message.author.guild_permissions.ban_members:
         try:
-            await bot.ban(user)
-            await bot.add_reaction(ctx.message, "✅")
+            await user.ban(powod)
+            await ctx.message.add_reaction("✅")
         except Exception as e:
-            await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-            await bot.add_reaction(ctx.message, "❎")
+            await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+            await ctx.message.add_reaction("❎")
     else:
-        await bot.say("Nie masz permisji do tego!")
-        await bot.add_reaction(ctx.message, "❎")
+        await ctx.reply("Nie masz permisji do tego!")
+        await ctx.message.add_reaction("❎")
 
 @bot.command(pass_context=True)
 async def Wyczyść(ctx, ilosc : int):
     try:
-        if not ctx.message.author.server_permissions.manage_messages:
-            await bot.say("Nie masz permisji do tego!")
+        if not ctx.message.author.guild_permissions.manage_messages:
+            await ctx.reply("Nie masz permisji do tego!")
             return
-        await bot.delete_message(ctx.message)
-        wiadomosci = []
-        async for message in bot.logs_from(ctx.message.channel, limit=ilosc):
-            wiadomosci.append(message)
-        await bot.delete_messages(wiadomosci)
-        msg = await bot.say("Usunąłem {} wiadomości!".format(str(len(wiadomosci))))
-        await asyncio.sleep(5)
-        await bot.delete_message(msg)
+        await ctx.message.channel.purge(amount=ilosc)
+        msg = await ctx.reply("Usunąłem {} wiadomości!".format(str(ilosc)))
+        await msg.delete(5)
     except Exception as e:
-            await bot.say("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))            
+            await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))            
 
 @bot.command(pass_context=True)
 async def Konfiguruj(ctx, co=None, *, wartosc=None):
-    if not ctx.message.author.server_permissions.manage_server:
-        await bot.say("Nie masz permisji do tego!")
+    if not ctx.message.author.guild_permissions.manage_server:
+        await ctx.reply("Nie masz permisji do tego!")
         return
     if co == None:
         embed = discord.Embed(title="Konfiguruj bota:")
         embed.add_field(name="joindm", value="Prywatna wiadomość do nowego członka serwera.", inline=True)
         embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
-        await bot.say(embed=embed)
+        await ctx.reply(embed=embed)
     elif co == "joindm" or co == "removedm":
         if wartosc == None:
             embed = discord.Embed(title="Konfiguruj bota:")
@@ -534,14 +488,14 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             elif co == "removedm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True)
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
-            await bot.say(embed=embed)
+            await ctx.reply(embed=embed)
             return
         l = str(wartosc).lower()
         if co == "joindm":
             Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
         elif co == "removedm":
             Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
-        await bot.add_reaction(ctx.message, "✅")
+        await ctx.message.add_reaction("✅")
 
             
 async def uptime():
@@ -553,7 +507,7 @@ async def uptime():
     seconds = 0
     global uptimemsg
     uptimemsg = "0:0:0"
-    while not bot.is_closed:
+    while not bot.is_closed():
         await asyncio.sleep(1)
         seconds += 1
         if seconds == 60:
@@ -568,7 +522,5 @@ async def uptime():
             uptimemsg = str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
 bot.loop.create_task(uptime())
-
-token = os.environ.get('TOKEN')
 
 bot.run(token)
