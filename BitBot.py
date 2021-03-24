@@ -44,7 +44,7 @@ import datetime
 from math import floor
 from googlesearch import search
 
-zaufani = ["233592407902388224"]
+zaufani = [233592407902388224]
 nievip = "Hmm... Wygląda na to, że nie jesteś programistą BitBota."
 
 global rokrodzin
