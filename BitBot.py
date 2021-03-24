@@ -149,8 +149,15 @@ async def Odwróć(ctx, *, tekst : str):
     
 @bot.command(pass_context=True)
 async def Członkowie(ctx):
-    ludzie = len([member for member in ctx.message.guild.members if not member.bot])
-    boty = len([member for member in ctx.message.guild.members if member.bot])
+    ludziel = []
+    botyl = []
+    for member in ctx.message.guild.members:
+        if not member.bot:
+            ludziel.append(member)
+        else:
+            botyl.append(member)
+    ludzie = len(ludziel)
+    boty = len(botyl)
     jeden_procent = 100 / (ludzie + boty)
     procent_ludzi = ludzie * jeden_procent
     procent_botów = boty * jeden_procent
@@ -471,7 +478,7 @@ async def Wyczyść(ctx, ilosc : int):
 
 @bot.command(pass_context=True)
 async def Konfiguruj(ctx, co=None, *, wartosc=None):
-    if not ctx.message.author.guild_permissions.manage_server:
+    if not ctx.message.author.guild_permissions.manage_guild:
         await ctx.reply("Nie masz permisji do tego!")
         return
     if co == None:
