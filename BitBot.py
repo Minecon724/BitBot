@@ -85,11 +85,11 @@ async def on_member_remove(member):
 async def LiteraPoLiterze(ctx, *, tekst):
     licznik = 1
     wiadomosc = str(tekst[0])
-    msg = await ctx.message.channel.send(wiadomosc)
+    msg = await ctx.send(wiadomosc)
     while licznik < len(tekst):
         await asyncio.sleep(0.5)
         wiadomosc = wiadomosc + str(tekst[licznik])
-        await msg.edit(wiadomosc)
+        await msg.edit(content=wiadomosc)
         licznik = licznik + 1
 
 @bot.command(pass_context=True)
