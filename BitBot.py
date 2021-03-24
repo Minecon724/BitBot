@@ -436,7 +436,7 @@ async def Nazwa(ctx, user: discord.Member, *, nazwa):
 async def Wykop(ctx, user: discord.Member, *, powod=None):
     if ctx.message.author.guild_permissions.kick_members:
         try:
-            await user.kick(powod)
+            await user.guild.kick(user, reason=powod)
             await ctx.message.add_reaction("✅")
         except Exception as e:
             await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
@@ -449,7 +449,7 @@ async def Wykop(ctx, user: discord.Member, *, powod=None):
 async def Zbanuj(ctx, user: discord.Member, *, powod=None):
     if ctx.message.author.guild_permissions.ban_members:
         try:
-            await user.ban(powod)
+            await user.guild.ban(user, reason=powod)
             await ctx.message.add_reaction("✅")
         except Exception as e:
             await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
