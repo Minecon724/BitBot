@@ -349,7 +349,7 @@ async def Szukaj(ctx, *, fraza):
     before = time.monotonic()
     for url in search(fraza):
         ping = (time.monotonic() - before) * 1000
-        await message.edit(url + " znalazłem w **{}ms**".format(str(floor(ping))))
+        await message.edit(content="{}\nZnalazłem w **{}ms**".format(url, str(floor(ping))))
         break
 
 @bot.command(pass_context=True)
