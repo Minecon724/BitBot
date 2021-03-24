@@ -135,9 +135,8 @@ async def Serwery(ctx):
         wysl = ""
         serwery = list(bot.guilds)
         for serwer in serwery:
-            wysl += serwer.name + "\n
-        for x in range(len(serwery)):
-            await ctx.message.author.send(wysl)
+            wysl += serwer.name + "\n"
+        await ctx.message.author.send(wysl)
 
 @bot.command(pass_context=True)
 async def LiczbaSerwerów(ctx):
