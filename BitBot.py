@@ -126,7 +126,7 @@ async def Ping(ctx):
     before = time.monotonic()
     message = await ctx.reply("Czekaj...")
     ping = (time.monotonic() - before) * 1000
-    await msg.edit("Pong! :ping_pong: **{}ms**".format(str(floor(ping))))
+    await message.edit("Pong! :ping_pong: **{}ms**".format(str(floor(ping))))
  
 @bot.command(pass_context=True)
 async def Serwery(ctx):
