@@ -474,8 +474,9 @@ async def Wyczyść(ctx, ilosc : int):
         if not ctx.message.author.guild_permissions.manage_messages:
             await ctx.reply("Nie masz permisji do tego!")
             return
+        await ctx.message.delete()
         await ctx.message.channel.purge(limit=ilosc, bulk=True)
-        msg = await ctx.reply("Usunąłem {} wiadomości!".format(str(ilosc)))
+        msg = await ctx.send("Usunąłem {} wiadomości!".format(str(ilosc)))
         await msg.delete(5)
     except Exception as e:
             await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))            
