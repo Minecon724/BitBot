@@ -56,7 +56,7 @@ intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
 
-bot = commands.Bot(command_prefix=prefix)
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -89,7 +89,7 @@ async def LiteraPoLiterze(ctx, *, tekst):
     while licznik < len(tekst):
         await asyncio.sleep(0.5)
         wiadomosc = wiadomosc + str(tekst[licznik])
-        await msg.edit(content=wiadomosc)
+        await msg.edit(wiadomosc)
         licznik = licznik + 1
 
 @bot.command(pass_context=True)
@@ -474,7 +474,7 @@ async def Wyczyść(ctx, ilosc : int):
         if not ctx.message.author.guild_permissions.manage_messages:
             await ctx.reply("Nie masz permisji do tego!")
             return
-        await ctx.message.channel.purge(amount=ilosc)
+        await ctx.message.channel.purge(limit=ilosc, bulk=True)
         msg = await ctx.reply("Usunąłem {} wiadomości!".format(str(ilosc)))
         await msg.delete(5)
     except Exception as e:
