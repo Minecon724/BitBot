@@ -52,6 +52,10 @@ rokurodzin = 2021
 
 prefix = "$$"
 
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+
 bot = commands.Bot(command_prefix=prefix)
 
 @bot.event
@@ -490,17 +494,17 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         if wartosc == None:
             embed = discord.Embed(title="Konfiguruj bota:")
             if co == "joindm":
-                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.server.id)), inline=True)
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.guild.id)), inline=True)
             elif co == "removedm":
-                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.server.id)), inline=True)
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.guild.id)), inline=True)
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
             await ctx.reply(embed=embed)
             return
         l = str(wartosc).lower()
         if co == "joindm":
-            Konfiguracje.UstawJoinDM(ctx.message.server.id, wartosc)
+            Konfiguracje.UstawJoinDM(ctx.message.guild.id, wartosc)
         elif co == "removedm":
-            Konfiguracje.UstawRemoveDM(ctx.message.server.id, wartosc)
+            Konfiguracje.UstawRemoveDM(ctx.message.guild.id, wartosc)
         await ctx.message.add_reaction("✅")
 
             
