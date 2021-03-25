@@ -72,9 +72,10 @@ bot = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True
 djezyki = {}
 
 for i in os.listdir("lang"):
-    if i.endswith(".yml"):
-        ld = yaml.load(i, Loader=yaml.FullLoader)
-        {i.replace(".yml", ""): ld}.update(djezyki)
+    ld = yaml.load(i, Loader=yaml.FullLoader)
+    {i.replace(".yml", ""): ld}.update(djezyki)
+
+
 
 @bot.event
 async def on_ready():
