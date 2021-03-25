@@ -50,6 +50,8 @@ import random
 import psutil
 import requests
 import datetime
+import re
+import yaml
 from math import floor
 from googlesearch import search
 
@@ -67,7 +69,12 @@ intents.presences = False
 
 bot = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True)
 
-jezyki = ["pl"]
+djezyki = {}
+
+for i in os.listdir("lang"):
+    if re.match(r"...yml$", i):
+        ld = yaml.load(i, Loader=yaml.FullLoader)
+        d = {i.replace(".yml", ""): ld}
 
 @bot.event
 async def on_ready():
@@ -85,6 +92,10 @@ async def on_member_remove(member):
     if not Konfiguracje.RemoveDM(member.guild.id) == "null":
         await member.send(Konfiguracje.RemoveDM(member.guild.id))
 
+@bot.event
+async def on_command_error(ctx, exception):
+    await ctx.send("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+        
 @bot.command(pass_context=True)
 async def LiteraPoLiterze(ctx, *, tekst):
     licznik = 1
@@ -188,12 +199,9 @@ async def Statystyki(ctx):
 
 @bot.command(pass_context=True)
 async def Pytanie(ctx, *, zapytaj):
-    try:
-        msg = await ctx.send(zapytaj)
-        await msg.add_reaction("❎")
-        await msg.add_reaction("✅")
-    except Exception as e:
-        await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+    msg = await ctx.send(zapytaj)
+    await msg.add_reaction("❎")
+    await msg.add_reaction("✅")
 
 @bot.command(pass_context=True)
 async def Milionerzy(ctx):
@@ -290,13 +298,10 @@ async def BotLink(ctx):
 
 @bot.command(pass_context=True)
 async def Zaproś(ctx, kanal):
-    try:
-        if not type(kanal) == discord.TextChannel:
-            raise discord.InvalidArgument("Argument musi być kanałem tekstowym")
-        zaproszenie = await kanal.create_invite()
-        await ctx.reply(zaproszenie)
-    except Exception as e:
-        await ctx.reply("Wystąpił błąd: \n```{}: {}```".format(type(e).__name__, e))
+    if not type(kanal) == discord.TextChannel:
+        raise discord.InvalidArgument("Argument musi być kanałem tekstowym")
+    zaproszenie = await kanal.create_invite()
+    await ctx.reply(zaproszenie)
 
 @bot.command(pass_context=True)
 async def Gra(ctx, *, status):
@@ -435,26 +440,18 @@ async def Serwer(ctx):
 
 @bot.command(pass_context=True)
 async def Nazwa(ctx, user: discord.Member, *, nazwa):
-    try:
-        if ctx.message.author.guild_permissions.manage_nicknames:
-            await user.edit(nick=nazwa)
-            await ctx.message.add_reaction("✅")
-        else:
-            await ctx.reply("Nie masz permisji do tego!")
-            await ctx.message.add_reaction("❎")
-    except Exception as e:
-        await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
+    if ctx.message.author.guild_permissions.manage_nicknames:
+        await user.edit(nick=nazwa)
+        await ctx.message.add_reaction("✅")
+    else:
+        await ctx.reply("Nie masz permisji do tego!")
         await ctx.message.add_reaction("❎")
 
 @bot.command(pass_context=True)
 async def Wykop(ctx, user: discord.Member, *, powod=None):
     if ctx.message.author.guild_permissions.kick_members:
-        try:
-            await user.kick(reason=powod)
-            await ctx.message.add_reaction("✅")
-        except Exception as e:
-            await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-            await ctx.message.add_reaction("❎")
+        await user.kick(reason=powod)
+        await ctx.message.add_reaction("✅")
     else:
         await ctx.reply("Nie masz permisji do tego!")
         await ctx.message.add_reaction("❎")
@@ -462,29 +459,22 @@ async def Wykop(ctx, user: discord.Member, *, powod=None):
 @bot.command(pass_context=True)
 async def Zbanuj(ctx, user: discord.Member, *, powod=None):
     if ctx.message.author.guild_permissions.ban_members:
-        try:
-            await user.ban(reason=powod)
-            await ctx.message.add_reaction("✅")
-        except Exception as e:
-            await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))
-            await ctx.message.add_reaction("❎")
+        await user.ban(reason=powod)
+        await ctx.message.add_reaction("✅")
     else:
         await ctx.reply("Nie masz permisji do tego!")
         await ctx.message.add_reaction("❎")
 
 @bot.command(pass_context=True)
 async def Wyczyść(ctx, ilosc : int):
-    try:
-        if not ctx.message.author.guild_permissions.manage_messages:
-            await ctx.reply("Nie masz permisji do tego!")
+    if not ctx.message.author.guild_permissions.manage_messages:
+        await ctx.reply("Nie masz permisji do tego!")
             return
-        await ctx.message.delete()
-        await ctx.message.channel.purge(limit=ilosc, bulk=True)
-        msg = await ctx.send("Usunąłem {} wiadomości!".format(str(ilosc)))
-        await msg.delete(5)
-    except Exception as e:
-            await ctx.reply("Wystąpił błąd: \n```{}: {}```\n".format(type(e).__name__, e))            
-
+    await ctx.message.delete()
+    await ctx.message.channel.purge(limit=ilosc, bulk=True)
+    msg = await ctx.send("Usunąłem {} wiadomości!".format(str(ilosc)))
+    await msg.delete(delay=5)
+            
 @bot.command(pass_context=True)
 async def Konfiguruj(ctx, co=None, *, wartosc=None):
     if not ctx.message.author.guild_permissions.manage_guild:
@@ -515,8 +505,8 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             Konfiguracje.UstawRemoveDM(str(ctx.message.guild.id), wartosc)
         elif co == "lang":
             Konfiguracje.UstawJezyk(str(ctx.message.guild.id), wartosc)
-            if not wartosc in jezyki:
-                await ctx.message.reply("Dostepne jezyki: " + ', '.join(jezyki))
+            if not wartosc in djezyki.keys():
+                await ctx.message.reply("Dostepne jezyki: " + ', '.join(djezyki.keys()))
                 return
         await ctx.message.add_reaction("✅")
 
