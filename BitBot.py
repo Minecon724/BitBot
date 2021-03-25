@@ -469,7 +469,7 @@ async def Zbanuj(ctx, user: discord.Member, *, powod=None):
 async def Wyczyść(ctx, ilosc : int):
     if not ctx.message.author.guild_permissions.manage_messages:
         await ctx.reply("Nie masz permisji do tego!")
-            return
+        return
     await ctx.message.delete()
     await ctx.message.channel.purge(limit=ilosc, bulk=True)
     msg = await ctx.send("Usunąłem {} wiadomości!".format(str(ilosc)))
