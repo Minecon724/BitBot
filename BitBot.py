@@ -516,7 +516,7 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         elif co == "lang":
             Konfiguracje.UstawJezyk(str(ctx.message.guild.id), wartosc)
             if not wartosc in jezyki:
-                ctx.message.reply("Dostepne jezyki: " + ', '.join(jezyki))
+                await ctx.message.reply("Dostepne jezyki: " + ', '.join(jezyki))
                 return
         await ctx.message.add_reaction("✅")
 
