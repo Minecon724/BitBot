@@ -72,7 +72,7 @@ bot = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True
 djezyki = {}
 
 for i in os.listdir("lang"):
-    if re.match(r"...yml$", i):
+    if i.endswith(".yml"):
         ld = yaml.load(i, Loader=yaml.FullLoader)
         {i.replace(".yml", ""): ld}.update(djezyki)
 
