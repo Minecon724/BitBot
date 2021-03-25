@@ -496,7 +496,7 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             elif co == "removedm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(str(ctx.message.guild.id))), inline=True)
             elif co == "lang":
-                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(str(ctx.message.guild.id))), inline=True)
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.Jezyk(str(ctx.message.guild.id))), inline=True)
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
             await ctx.reply(embed=embed)
             return
