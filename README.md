@@ -1,7 +1,7 @@
 # BitBot
 
 1. Wymagania
-* Python 3 (`apt install python3.9`)
+* Python >=3.5.3 (`apt install python3.9`)
 * Pip 3 (`apt install python3-pip`)
 * Git (`apt install git`)
 * Konto bota (https://discord.com/developers)
