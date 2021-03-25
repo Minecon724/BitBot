@@ -56,20 +56,13 @@ intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
 
-bot = commands.Bot(command_prefix=prefix, intents=intents)
+bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=Pomoc())
 
 @bot.event
 async def on_ready():
     global uruchomionyw
     uruchomionyw = str(floor((time.monotonic() - poczatek) * 1000)) + "ms"
     print("BitBot jest gotowy.")
-    gos = random.randint(1, 3)
-    if gos == 1:
-        await bot.change_presence(activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds)))))
-    elif gos == 2:
-        await bot.change_presence(activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=discord.ActivityType.listening))
-    elif gos == 3:
-        await bot.change_presence(activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=discord.ActivityType.watching))
 
 @bot.event
 async def on_member_join(member):
@@ -532,6 +525,15 @@ async def uptime():
         else:
             uptimemsg = str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
+async def status():
+    await bot.wait_until_ready()
+    while not bot.is_closed:
+        typ = random.choice([discord.ActivityType.playing, discord.ActivityType.listening, discord.ActivityType.streaming, discord.ActivityType.watching])
+        status = random.choice([discord.Status.idle, discord.Status.dnd, discord.Status.online])
+        await bot.change_presence(status=status, activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=typ))
+        await asyncio.sleep(20)
+        
+            
 bot.loop.create_task(uptime())
 
 bot.run(token)
