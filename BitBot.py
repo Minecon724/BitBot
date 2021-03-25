@@ -496,7 +496,7 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
         embed.add_field(name="lang", value="Ustaw język.", inline=True)
         await ctx.reply(embed=embed)
-    elif co == "joindm" or co == "removedm":
+    elif co == "joindm" or co == "removedm" or co == "lang":
         if wartosc == None:
             embed = discord.Embed(title="Konfiguruj bota:")
             if co == "joindm":
