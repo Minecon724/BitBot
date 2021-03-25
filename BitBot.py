@@ -9,7 +9,6 @@ class Konfiguracje:
             return plik.read()
         except:
             return "null"
-        plik.close()
 
     def RemoveDM(serwer):
         try:
@@ -17,7 +16,13 @@ class Konfiguracje:
             return plik.read()
         except:
             return "null"
-        plik.close()
+    
+    def Jezyk(serwer):
+        try:
+            plik = open("Jezyk" + serwer, "r")
+            return plik.read()
+        except:
+            return "null"
 
     def UstawRemoveDM(serwer, wartosc):
         plik = open("RemoveDM" + serwer, "w")
@@ -29,6 +34,10 @@ class Konfiguracje:
         plik.write(wartosc)
         plik.close()
     
+    def UstawJezyk(serwer, wartosc):
+        plik = open("Lang" + serwer, "w")
+        plik.write(wartosc)
+        plik.close()
 
 import os
 token = os.environ.get('TOKEN')
@@ -57,6 +66,8 @@ intents.typing = False
 intents.presences = False
 
 bot = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True)
+
+jezyki = ["pl"]
 
 @bot.event
 async def on_ready():
@@ -483,6 +494,7 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
         embed = discord.Embed(title="Konfiguruj bota:")
         embed.add_field(name="joindm", value="Prywatna wiadomość do nowego członka serwera.", inline=True)
         embed.add_field(name="removedm", value="Prywatna wiadomość do członka opuszczającego serwer.", inline=True)
+        embed.add_field(name="removedm", value="Ustaw język.", inline=True)
         await ctx.reply(embed=embed)
     elif co == "joindm" or co == "removedm":
         if wartosc == None:
@@ -490,6 +502,8 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             if co == "joindm":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.JoinDM(ctx.message.guild.id)), inline=True)
             elif co == "removedm":
+                embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.guild.id)), inline=True)
+            elif co == "lang":
                 embed.add_field(name="Wartość to:", value="{}".format(Konfiguracje.RemoveDM(ctx.message.guild.id)), inline=True)
             embed.set_footer(text="Jeżeli chcesz ustawić wartość, użyj *{}Konfiguruj {} <wartość>*.".format(prefix, co))
             await ctx.reply(embed=embed)
@@ -499,6 +513,11 @@ async def Konfiguruj(ctx, co=None, *, wartosc=None):
             Konfiguracje.UstawJoinDM(ctx.message.guild.id, wartosc)
         elif co == "removedm":
             Konfiguracje.UstawRemoveDM(ctx.message.guild.id, wartosc)
+        elif co == "lang":
+            Konfiguracje.UstawJezyk(ctx.message.guild.id, wartosc)
+            if not wartosc in jezyki:
+                ctx.message.reply("Dostepne jezyki: " + ', '.join(jezyki))
+                return
         await ctx.message.add_reaction("✅")
 
             
@@ -513,6 +532,10 @@ async def uptime():
     uptimemsg = "0:0:0"
     while not bot.is_closed():
         await asyncio.sleep(1)
+        if seconds % 20 == 0:
+            typ = random.choice([discord.ActivityType.playing, discord.ActivityType.listening, discord.ActivityType.streaming, discord.ActivityType.watching])
+            status = random.choice([discord.Status.idle, discord.Status.dnd, discord.Status.online])
+            await bot.change_presence(status=status, activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=typ))
         seconds += 1
         if seconds == 60:
             minutes += 1
@@ -525,16 +548,6 @@ async def uptime():
         else:
             uptimemsg = str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
-async def status():
-    await bot.wait_until_ready()
-    while not bot.is_closed:
-        typ = random.choice([discord.ActivityType.playing, discord.ActivityType.listening, discord.ActivityType.streaming, discord.ActivityType.watching])
-        status = random.choice([discord.Status.idle, discord.Status.dnd, discord.Status.online])
-        await bot.change_presence(status=status, activity=discord.Game(name="{} serwerów | $$Pomoc".format(str(len(bot.guilds))), type=typ))
-        await asyncio.sleep(20)
-        
-            
 bot.loop.create_task(uptime())
-bot.loop.create_task(status())
 bot.remove_command('help')
 bot.run(token)
