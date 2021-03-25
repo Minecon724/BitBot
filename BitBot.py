@@ -56,7 +56,7 @@ intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
 
-bot = commands.Bot(command_prefix=prefix, intents=intents)
+bot = commands.Bot(command_prefix=prefix, intents=intents, case_insensitive=True)
 
 @bot.event
 async def on_ready():
@@ -536,5 +536,5 @@ async def status():
             
 bot.loop.create_task(uptime())
 bot.loop.create_task(status())
-bot.help_command = Pomoc()
+bot.remove_command('help')
 bot.run(token)
