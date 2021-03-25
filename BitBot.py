@@ -41,7 +41,7 @@ class Konfiguracje:
 
 import os
 token = os.environ.get('TOKEN')
-print(os.listdir(os.getcwd()))
+print(os.listdir("lang"))
 
 import discord
 from discord.ext import commands
