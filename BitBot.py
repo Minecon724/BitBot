@@ -35,7 +35,7 @@ class Konfiguracje:
         plik.close()
     
     def UstawJezyk(serwer, wartosc):
-        plik = open("Lang" + serwer, "w")
+        plik = open("Jezyk" + serwer, "w")
         plik.write(wartosc)
         plik.close()
 
