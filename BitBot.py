@@ -89,7 +89,7 @@ async def LiteraPoLiterze(ctx, *, tekst):
     while licznik < len(tekst):
         await asyncio.sleep(0.5)
         wiadomosc = wiadomosc + str(tekst[licznik])
-        await msg.edit(wiadomosc)
+        await msg.edit(content=wiadomosc)
         licznik = licznik + 1
 
 @bot.command(pass_context=True)
