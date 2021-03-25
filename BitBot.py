@@ -74,7 +74,7 @@ djezyki = {}
 for i in os.listdir("lang"):
     if re.match(r"...yml$", i):
         ld = yaml.load(i, Loader=yaml.FullLoader)
-        d = {i.replace(".yml", ""): ld}
+        {i.replace(".yml", ""): ld}.update(djezyki)
 
 @bot.event
 async def on_ready():
