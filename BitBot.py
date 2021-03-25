@@ -41,7 +41,7 @@ class Konfiguracje:
 
 import os
 token = os.environ.get('TOKEN')
-print(os.listdir(os.getcwd())
+print(os.listdir(os.getcwd()))
 
 import discord
 from discord.ext import commands
@@ -74,7 +74,7 @@ djezyki = {}
 
 for i in os.listdir("lang"):
     ld = yaml.load(i, Loader=yaml.FullLoader)
-    {i.replace(".yml", ""): ld}.update(djezyki)
+    djezyki[i.replace(".yml", "")] = ld
 
 
 
