@@ -1,3 +1,5 @@
+[![Discord Bots](https://top.gg/api/widget/status/432565925934268416.svg?noavatar=true)](https://top.gg/bot/432565925934268416)
+
 # BitBot
 
 1. Wymagania
