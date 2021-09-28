@@ -10,7 +10,7 @@ public class StatusChange implements Runnable {
 	}
 	@Override
 	public void run() {
-		jda.getPresence().setActivity(Activity.playing("Na " + jda.getGuilds().size() + "serwerach!"));
+		jda.getPresence().setActivity(Activity.playing("Na " + jda.getGuilds().size() + " serwerach!"));
 	}
 
 }
