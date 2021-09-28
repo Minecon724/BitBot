@@ -1,8 +1,0 @@
-discord.py
-google
-psutil
-requests
-aiohttp
-websockets
-chardet
-pyyaml
